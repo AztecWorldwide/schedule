@@ -420,53 +420,125 @@
             transform: scale(0.95);
         }
         
-        .emergency-panel {
+        .code-overlay {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            z-index: 100;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
         }
         
-        .emergency-btn {
-            background: linear-gradient(45deg, #ff5722, #d32f2f);
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+        .code-modal {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        
+        .code-header {
             font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #81c784;
+        }
+        
+        .code-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 0.2em;
+        }
+        
+        .code-input:focus {
+            outline: none;
+            border-color: #81c784;
+            box-shadow: 0 0 10px rgba(129, 199, 132, 0.3);
+        }
+        
+        .code-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .code-error {
+            color: #ff6b6b;
+            margin-top: 10px;
+            font-size: 0.9em;
+            display: none;
+        }
+        
+        .settings-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(255, 87, 34, 0.4);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
+            gap: 8px;
         }
         
-        .emergency-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
+        .party-btn {
+            background: linear-gradient(45deg, #ffeb3b, #ffc107);
+            color: #333;
         }
         
-        .emergency-options {
+        .party-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 235, 59, 0.4);
+        }
+        
+        .emergency-btn-settings {
+            background: linear-gradient(45deg, #ff5722, #d32f2f);
+            color: white;
+        }
+        
+        .emergency-btn-settings:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+        }
+        
+        .emergency-options-settings {
             display: none;
             flex-direction: column;
             gap: 8px;
-            min-width: 120px;
+            min-width: 200px;
+            margin-top: 10px;
         }
         
-        .emergency-options.show {
+        .emergency-options-settings.show {
             display: flex;
         }
         
-        .emergency-option {
-            padding: 8px 12px;
+        .emergency-option-settings {
+            padding: 10px 15px;
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
@@ -477,40 +549,29 @@
             transition: all 0.3s ease;
         }
         
-        .emergency-option:hover {
+        .emergency-option-settings:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
         
-        .emergency-option.lockdown {
+        .emergency-option-settings.lockdown {
             background: rgba(255, 193, 7, 0.3);
             border-color: #ffc107;
         }
         
-        .emergency-option.shelter {
+        .emergency-option-settings.shelter {
             background: rgba(33, 150, 243, 0.3);
             border-color: #2196f3;
         }
         
-        .emergency-option.fire {
+        .emergency-option-settings.fire {
             background: rgba(244, 67, 54, 0.3);
             border-color: #f44336;
         }
         
-        .emergency-exit {
-            padding: 6px 12px;
+        .emergency-exit-settings {
             background: rgba(76, 175, 80, 0.3);
-            border: 1px solid #4caf50;
-            border-radius: 8px;
-            color: white;
-            text-align: center;
-            cursor: pointer;
-            font-size: 0.8em;
-            margin-top: 5px;
-        }
-        
-        .emergency-exit:hover {
-            background: rgba(76, 175, 80, 0.5);
+            border-color: #4caf50;
         }
         
         /* Emergency States */
@@ -855,38 +916,27 @@
                 font-size: 1.1em;
             }
             
-            .celebration-btn {
-                bottom: 80px;
-                right: 15px;
-                width: 50px;
-                height: 50px;
+            .code-modal {
+                padding: 30px;
+            }
+            
+            .code-header {
                 font-size: 1.3em;
             }
             
-            .emergency-panel {
-                bottom: 15px;
-                left: 15px;
+            .code-input {
                 padding: 12px;
+                font-size: 1.1em;
             }
             
-            .emergency-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.3em;
+            .settings-controls {
+                flex-direction: column;
+                gap: 10px;
             }
             
-            .emergency-options {
-                min-width: 100px;
-            }
-            
-            .emergency-option {
-                padding: 6px 10px;
-                font-size: 0.8em;
-            }
-            
-            .emergency-exit {
-                padding: 5px 10px;
-                font-size: 0.7em;
+            .control-btn {
+                padding: 10px 15px;
+                font-size: 0.9em;
             }
             
             .emergency-text {
@@ -903,38 +953,22 @@
                 padding: 12px;
             }
             
-            .celebration-btn {
-                bottom: 70px;
-                right: 10px;
-                width: 45px;
-                height: 45px;
+            .code-modal {
+                padding: 20px;
+            }
+            
+            .code-header {
                 font-size: 1.2em;
             }
             
-            .emergency-panel {
-                bottom: 10px;
-                left: 10px;
+            .code-input {
                 padding: 10px;
+                font-size: 1em;
             }
             
-            .emergency-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2em;
-            }
-            
-            .emergency-options {
-                min-width: 90px;
-            }
-            
-            .emergency-option {
-                padding: 5px 8px;
-                font-size: 0.75em;
-            }
-            
-            .emergency-exit {
-                padding: 4px 8px;
-                font-size: 0.65em;
+            .control-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
             }
             
             .emergency-text {
@@ -944,18 +978,7 @@
     </style>
 </head>
 <body>
-    <button class="settings-btn" onclick="openSettings()" aria-label="Open Settings">⚙️</button>
-    <button class="celebration-btn" onclick="triggerCelebration()" aria-label="Celebrate">🎉</button>
-    
-    <div class="emergency-panel">
-        <button class="emergency-btn" onclick="toggleEmergencyOptions()" aria-label="Emergency">🚨</button>
-        <div class="emergency-options" id="emergencyOptions">
-            <div class="emergency-option lockdown" onclick="activateEmergency('lockdown')">Lockdown</div>
-            <div class="emergency-option shelter" onclick="activateEmergency('shelter')">Shelter-In</div>
-            <div class="emergency-option fire" onclick="activateEmergency('fire')">Fire</div>
-            <div class="emergency-exit" onclick="deactivateEmergency()">Exit Emergency</div>
-        </div>
-    </div>
+    <button class="settings-btn" onclick="promptForCode()" aria-label="Open Settings">⚙️</button>
     
     <div class="dashboard">
         <!-- Row 1 -->
@@ -1017,9 +1040,37 @@
         </div>
     </div>
 
+    <div class="code-overlay" id="codeOverlay">
+        <div class="code-modal">
+            <div class="code-header">Enter Settings Code</div>
+            <input type="password" class="code-input" id="codeInput" placeholder="Enter 4-digit code" maxlength="4">
+            <div class="code-buttons">
+                <button class="btn btn-save" onclick="checkCode()">Enter</button>
+                <button class="btn btn-cancel" onclick="closeCodePrompt()">Cancel</button>
+            </div>
+            <div class="code-error" id="codeError">Incorrect code. Please try again.</div>
+        </div>
+    </div>
+
     <div class="settings-overlay" id="settingsOverlay" role="dialog" aria-hidden="true">
         <div class="settings-modal">
             <div class="settings-header">Settings</div>
+            
+            <div class="settings-controls">
+                <button class="control-btn party-btn" onclick="triggerCelebration()">
+                    🎉 Party Mode
+                </button>
+                <button class="control-btn emergency-btn-settings" onclick="toggleEmergencyOptionsSettings()">
+                    🚨 Emergency Mode
+                </button>
+            </div>
+            
+            <div class="emergency-options-settings" id="emergencyOptionsSettings">
+                <div class="emergency-option-settings lockdown" onclick="activateEmergency('lockdown')">🔒 Lockdown</div>
+                <div class="emergency-option-settings shelter" onclick="activateEmergency('shelter')">🏠 Shelter-In</div>
+                <div class="emergency-option-settings fire" onclick="activateEmergency('fire')">🔥 Fire</div>
+                <div class="emergency-option-settings emergency-exit-settings" onclick="deactivateEmergency()">✅ Exit Emergency</div>
+            </div>
             
             <div class="settings-section">
                 <h3>Weather Location</h3>
@@ -1090,7 +1141,7 @@
     <script>
         'use strict';
         
-        const APP_VERSION = '2.5.0';
+        const APP_VERSION = '2.6.0';
         const STORAGE_KEY = 'schoolDashboardSettings';
         
         // Default settings and presets
@@ -2281,15 +2332,53 @@
             }
         }
         
-        // Emergency functions
-        function toggleEmergencyOptions() {
-            const options = document.getElementById('emergencyOptions');
+        // Code protection functions
+        function promptForCode() {
+            document.getElementById('codeOverlay').style.display = 'flex';
+            document.getElementById('codeInput').focus();
+        }
+        
+        function closeCodePrompt() {
+            document.getElementById('codeOverlay').style.display = 'none';
+            document.getElementById('codeInput').value = '';
+            document.getElementById('codeError').style.display = 'none';
+        }
+        
+        function checkCode() {
+            const enteredCode = document.getElementById('codeInput').value;
+            const correctCode = '1551';
+            
+            if (enteredCode === correctCode) {
+                closeCodePrompt();
+                openSettings();
+            } else {
+                document.getElementById('codeError').style.display = 'block';
+                document.getElementById('codeInput').value = '';
+                document.getElementById('codeInput').focus();
+            }
+        }
+        
+        // Settings UI functions
+        function openSettings() {
+            document.getElementById('settingsOverlay').style.display = 'flex';
+            document.getElementById('cityInput').value = userSettings.city;
+            document.getElementById('announcementsInput').value = userSettings.announcements.join('\n');
+            document.getElementById('alertsInput').value = userSettings.alerts.join('\n');
+            document.getElementById('dynamicCardsToggle').checked = userSettings.dynamicCards;
+            generateScheduleInputs();
+        }
+        
+        function toggleEmergencyOptionsSettings() {
+            const options = document.getElementById('emergencyOptionsSettings');
             options.classList.toggle('show');
         }
         
         function activateEmergency(type) {
             // Hide emergency options
-            document.getElementById('emergencyOptions').classList.remove('show');
+            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
+            if (emergencyOptions) {
+                emergencyOptions.classList.remove('show');
+            }
             
             // Set emergency mode
             emergencyMode = type;
@@ -2323,20 +2412,20 @@
             
             scheduleCard.innerHTML = `<div class="emergency-text ${textClass}">${emergencyText}</div>`;
             
-            // Ensure emergency panel stays visible
-            const emergencyPanel = document.querySelector('.emergency-panel');
-            emergencyPanel.style.zIndex = '1000';
-            
-            // Ensure settings and celebration buttons stay visible
+            // Ensure settings button stays visible
             const settingsBtn = document.querySelector('.settings-btn');
-            const celebrationBtn = document.querySelector('.celebration-btn');
             settingsBtn.style.zIndex = '1000';
-            celebrationBtn.style.zIndex = '1000';
+            
+            // Close settings if open
+            closeSettings();
         }
         
         function deactivateEmergency() {
             // Hide emergency options
-            document.getElementById('emergencyOptions').classList.remove('show');
+            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
+            if (emergencyOptions) {
+                emergencyOptions.classList.remove('show');
+            }
             
             // Remove emergency classes
             document.body.classList.remove('emergency-active', 'emergency-lockdown', 'emergency-shelter', 'emergency-fire');
@@ -2352,12 +2441,8 @@
             emergencyMode = null;
             
             // Reset z-index values
-            const emergencyPanel = document.querySelector('.emergency-panel');
             const settingsBtn = document.querySelector('.settings-btn');
-            const celebrationBtn = document.querySelector('.celebration-btn');
-            emergencyPanel.style.zIndex = '100';
             settingsBtn.style.zIndex = '100';
-            celebrationBtn.style.zIndex = '100';
             
             // Apply current card color settings
             applyCardColorSetting();
@@ -2394,24 +2479,33 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeSettings();
+                closeCodePrompt();
                 // Close emergency options if open
-                document.getElementById('emergencyOptions').classList.remove('show');
+                const emergencyOptions = document.getElementById('emergencyOptionsSettings');
+                if (emergencyOptions) {
+                    emergencyOptions.classList.remove('show');
+                }
                 // Exit emergency mode if active
                 if (emergencyMode) {
                     deactivateEmergency();
                 }
             } else if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
                 event.preventDefault();
-                openSettings();
+                promptForCode();
+            } else if (event.key === 'Enter' && document.getElementById('codeOverlay').style.display === 'flex') {
+                checkCode();
             }
         });
         
         // Close emergency options when clicking outside
         document.addEventListener('click', function(event) {
-            const emergencyPanel = document.querySelector('.emergency-panel');
-            const emergencyOptions = document.getElementById('emergencyOptions');
+            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
+            const emergencyBtn = document.querySelector('.emergency-btn-settings');
             
-            if (!emergencyPanel.contains(event.target) && emergencyOptions.classList.contains('show')) {
+            if (emergencyOptions && emergencyBtn && 
+                !emergencyOptions.contains(event.target) && 
+                !emergencyBtn.contains(event.target) && 
+                emergencyOptions.classList.contains('show')) {
                 emergencyOptions.classList.remove('show');
             }
         });
