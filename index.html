@@ -358,6 +358,19 @@
             display: none;
         }
         
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        input[type="checkbox"]:checked {
+            background: #4caf50;
+            border-color: #4caf50;
+        }
+        
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             body {
@@ -474,6 +487,17 @@
                        placeholder="Enter location (e.g., New York NY, 10001, London)" 
                        value="New York, NY" aria-label="Weather location">
                 <div class="error-message" id="weatherError" role="alert"></div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Card Appearance</h3>
+                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <input type="checkbox" id="dynamicCardsToggle" style="transform: scale(1.2);">
+                    <span>Dynamic card colors (shuffle every 30 seconds)</span>
+                </label>
+                <div class="small-text" style="opacity: 0.7; margin-left: 32px;">
+                    When disabled, cards will remain translucent
+                </div>
             </div>
             
             <div class="settings-section">
@@ -604,6 +628,24 @@
 
         let userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
         let weatherData = { temp: '...', description: 'Loading...', loading: true, error: false };
+
+        // Card color system
+        const cardColors = [
+            'rgba(255, 99, 132, 0.3)',   // Red
+            'rgba(54, 162, 235, 0.3)',   // Blue  
+            'rgba(255, 205, 86, 0.3)',   // Yellow
+            'rgba(75, 192, 192, 0.3)',   // Teal
+            'rgba(153, 102, 255, 0.3)',  // Purple
+            'rgba(255, 159, 64, 0.3)',   // Orange
+            'rgba(199, 199, 199, 0.3)',  // Gray
+            'rgba(83, 102, 255, 0.3)',   // Indigo
+            'rgba(255, 99, 255, 0.3)',   // Pink
+            'rgba(102, 255, 178, 0.3)',  // Green
+            'rgba(255, 178, 102, 0.3)',  // Peach
+            'rgba(178, 102, 255, 0.3)',  // Lavender
+        ];
+
+        const defaultCardColor = 'rgba(255, 255, 255, 0.1)'; // Original translucent
 
         // Utility functions
         function timeToMinutes(timeStr) {
@@ -855,6 +897,40 @@
                 body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
             } else {
                 body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        }
+
+        // Card color management
+        function shuffleCardColors() {
+            if (!userSettings.dynamicCards) {
+                // Reset to static translucent
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.style.background = defaultCardColor;
+                });
+                return;
+            }
+
+            const cards = document.querySelectorAll('.card');
+            const shuffledColors = [...cardColors].sort(() => Math.random() - 0.5);
+            
+            cards.forEach((card, index) => {
+                const colorIndex = index % shuffledColors.length;
+                card.style.background = shuffledColors[colorIndex];
+                card.style.transition = 'background 2s ease-in-out';
+            });
+        }
+
+        function applyCardColorSetting() {
+            if (userSettings.dynamicCards) {
+                shuffleCardColors(); // Apply colors immediately
+            } else {
+                // Reset to static
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.style.background = defaultCardColor;
+                    card.style.transition = 'background 1s ease-in-out';
+                });
             }
         }
 
@@ -1194,6 +1270,7 @@
         function openSettings() {
             document.getElementById('settingsOverlay').style.display = 'flex';
             document.getElementById('cityInput').value = userSettings.city;
+            document.getElementById('dynamicCardsToggle').checked = userSettings.dynamicCards;
             generateScheduleInputs();
         }
         
@@ -1273,6 +1350,7 @@
             clearMessages();
             
             const newCity = document.getElementById('cityInput').value || 'New York, NY';
+            const newDynamicCards = document.getElementById('dynamicCardsToggle').checked;
             const tempSchedule = [...userSettings.schedule];
             const inputs = document.querySelectorAll('#scheduleInputs input');
             
@@ -1296,6 +1374,7 @@
             }
             
             userSettings.city = newCity;
+            userSettings.dynamicCards = newDynamicCards;
             userSettings.schedule = tempSchedule;
             
             const lastPeriod = userSettings.schedule.filter(p => p.type === 'period').pop();
@@ -1312,6 +1391,9 @@
                 'Settings saved for this session (localStorage unavailable)';
             successMsg.style.display = 'block';
             
+            // Apply card color setting immediately
+            applyCardColorSetting();
+            
             // If city changed, fetch new weather and update weather card
             fetchWeather().then(() => {
                 updateWeatherCard();
@@ -1327,6 +1409,7 @@
             if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
                 clearSavedSettings();
                 userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+                applyCardColorSetting(); // Apply default card setting
                 openSettings();
                 fetchWeather().then(() => {
                     updateWeatherCard();
@@ -1384,7 +1467,12 @@
                         
                         if (importData.settings && importData.settings.city && importData.settings.schedule) {
                             userSettings = importData.settings;
+                            // Ensure dynamicCards setting exists, default to true if not present
+                            if (typeof userSettings.dynamicCards !== 'boolean') {
+                                userSettings.dynamicCards = true;
+                            }
                             saveSettingsToStorage();
+                            applyCardColorSetting(); // Apply imported card setting
                             openSettings();
                             fetchWeather().then(() => {
                                 updateWeatherCard();
