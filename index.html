@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Real-time school schedule tracker with customizable periods, weather integration, and persistent settings.">
-    <meta name="keywords" content="school schedule, period tracker, class timer, student planner">
-    <meta name="author" content="School Schedule Tracker">
-    <title>School Schedule Tracker</title>
+    <meta name="description" content="Comprehensive school dashboard with schedule tracking, weather, and useful daily information.">
+    <meta name="keywords" content="school schedule, dashboard, period tracker, weather, daily planner">
+    <meta name="author" content="School Dashboard">
+    <title>School Dashboard</title>
     
-    <!-- Favicon placeholder - replace with your own -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
     
     <style>
@@ -22,72 +21,89 @@
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             color: white;
             transition: background 1s ease;
             overflow-x: hidden;
         }
         
-        .container {
-            text-align: center;
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 20px;
+            height: calc(100vh - 40px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 40px;
+            padding: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            min-width: 300px;
-            max-width: 90vw;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.2em;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .schedule-card {
+            grid-column: 2;
+            grid-row: 2;
         }
         
         .status {
-            font-size: clamp(2em, 5vw, 3em);
+            font-size: clamp(1.5em, 3vw, 2em);
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             line-height: 1.2;
         }
         
         .countdown {
-            font-size: clamp(3em, 8vw, 4em);
+            font-size: clamp(2em, 4vw, 2.5em);
             font-weight: bold;
             color: #ffeb3b;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin: 20px 0;
+            margin: 10px 0;
             line-height: 1.1;
         }
         
         .period-info {
-            font-size: clamp(1.2em, 3vw, 1.5em);
-            margin: 10px 0;
+            font-size: clamp(1em, 2vw, 1.2em);
+            margin: 5px 0;
             opacity: 0.9;
         }
         
         .next-info {
-            font-size: clamp(1.1em, 3vw, 1.3em);
-            margin-top: 15px;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+            margin-top: 10px;
             color: #81c784;
             font-weight: bold;
         }
         
-        .current-time {
-            font-size: clamp(1em, 2.5vw, 1.2em);
-            margin-top: 20px;
-            opacity: 0.8;
-        }
-        
         .before-after {
-            font-size: clamp(4em, 10vw, 5em);
+            font-size: clamp(2.5em, 5vw, 3em);
             font-weight: bold;
             text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
             line-height: 1;
         }
         
         .weather-info {
-            font-size: clamp(1em, 2.5vw, 1.2em);
-            margin: 10px 0;
+            font-size: clamp(1em, 2vw, 1.2em);
+            margin: 5px 0;
             color: #b3e5fc;
             display: flex;
             align-items: center;
@@ -101,22 +117,17 @@
             color: #ffeb3b;
         }
         
-        .weather-error {
-            color: #ff6b6b;
-            font-style: italic;
-        }
-        
         .settings-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 35px;
+            height: 35px;
             color: white;
-            font-size: 1.5em;
+            font-size: 1.2em;
             cursor: pointer;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
@@ -127,7 +138,75 @@
         .settings-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: rotate(90deg);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .large-text {
+            font-size: clamp(1.5em, 3vw, 2em);
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .medium-text {
+            font-size: clamp(1.1em, 2.5vw, 1.4em);
+            margin: 3px 0;
+        }
+        
+        .small-text {
+            font-size: clamp(0.8em, 1.8vw, 1em);
+            opacity: 0.8;
+            margin: 2px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #81c784);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .news-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px;
+            margin: 3px 0;
+            font-size: 0.85em;
+            line-height: 1.3;
+            width: 100%;
+        }
+        
+        .holiday-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .timezone-item {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin: 3px 0;
+            font-size: 0.9em;
         }
         
         .settings-overlay {
@@ -198,10 +277,6 @@
             flex-shrink: 0;
         }
         
-        .period-input input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
         .city-input {
             width: 100%;
             background: rgba(255, 255, 255, 0.2);
@@ -212,8 +287,25 @@
             font-size: 1em;
         }
         
-        .city-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .preset-btn {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196f3;
+            color: #bbdefb;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .preset-btn:hover {
+            background: rgba(33, 150, 243, 0.4);
         }
         
         .settings-buttons {
@@ -231,7 +323,6 @@
             font-size: 0.9em;
             cursor: pointer;
             transition: all 0.3s ease;
-            white-space: nowrap;
         }
         
         .btn-save {
@@ -239,20 +330,10 @@
             color: white;
         }
         
-        .btn-save:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-        }
-        
         .btn-cancel {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
         }
         
         .error-message {
@@ -264,7 +345,6 @@
             color: #ffcdd2;
             font-size: 0.9em;
             display: none;
-            line-height: 1.4;
         }
         
         .success-message {
@@ -276,38 +356,6 @@
             color: #c8e6c9;
             font-size: 0.9em;
             display: none;
-            line-height: 1.4;
-        }
-        
-        .info-notice {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid #4caf50;
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 15px;
-            font-size: 0.85em;
-            color: #c8e6c9;
-            line-height: 1.3;
-        }
-        
-        .preset-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .preset-btn {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid #2196f3;
-            color: #bbdefb;
-            transition: all 0.3s ease;
-        }
-        
-        .preset-btn:hover {
-            background: rgba(33, 150, 243, 0.4);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         /* Mobile responsiveness */
@@ -316,77 +364,39 @@
                 padding: 10px;
             }
             
-            .container {
-                padding: 20px;
+            .dashboard {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(9, minmax(120px, 1fr));
+                gap: 15px;
+                height: auto;
+            }
+            
+            .schedule-card {
+                grid-column: 1;
+                grid-row: 5;
+            }
+            
+            .card {
+                padding: 15px;
             }
             
             .settings-btn {
-                top: 10px;
-                right: 10px;
-                width: 45px;
-                height: 45px;
-                font-size: 1.3em;
-            }
-            
-            .settings-modal {
-                padding: 20px;
-            }
-            
-            .period-input label {
-                width: 80px;
-                font-size: 0.8em;
-            }
-            
-            .period-input input {
-                width: 60px;
-                padding: 4px 6px;
-                font-size: 0.9em;
-            }
-            
-            .period-input {
-                gap: 8px;
-            }
-            
-            .preset-buttons {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            
-            .settings-buttons {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
+                position: fixed;
+                top: 15px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.1em;
             }
         }
         
-        /* Extra small screens */
         @media (max-width: 480px) {
-            .period-input label {
-                width: 70px;
-                font-size: 0.75em;
+            .dashboard {
+                gap: 10px;
             }
             
-            .period-input input {
-                width: 55px;
-                padding: 3px 5px;
-            }
-            
-            .period-input {
-                gap: 6px;
-            }
-            
-            .period-input span {
-                font-size: 0.8em;
-            }
-        }
-        
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            .city-input, .period-input input {
-                background: rgba(255, 255, 255, 0.15);
-                border-color: rgba(255, 255, 255, 0.4);
+            .card {
+                padding: 12px;
             }
         }
     </style>
@@ -394,18 +404,69 @@
 <body>
     <button class="settings-btn" onclick="openSettings()" aria-label="Open Settings">⚙️</button>
     
-    <div class="container">
-        <div id="display" role="main" aria-live="polite"></div>
-        <div class="current-time" id="currentTime" aria-live="polite"></div>
+    <div class="dashboard">
+        <!-- Row 1 -->
+        <div class="card">
+            <div class="card-content" id="dateCard">
+                <h3>Today</h3>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-content" id="weatherCard">
+                <h3>Weather</h3>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-content" id="sunCard">
+                <h3>Sun & Moon</h3>
+            </div>
+        </div>
+        
+        <!-- Row 2 -->
+        <div class="card">
+            <div class="card-content" id="timezoneCard">
+                <h3>Time Zones</h3>
+            </div>
+        </div>
+        
+        <div class="card schedule-card">
+            <div class="card-content" id="scheduleCard">
+                <div id="display"></div>
+                <div class="small-text" id="currentTime"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-content" id="holidayCard">
+                <h3>Today's Special</h3>
+            </div>
+        </div>
+        
+        <!-- Row 3 -->
+        <div class="card">
+            <div class="card-content" id="progressCard">
+                <h3>Day Progress</h3>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-content" id="statsCard">
+                <h3>Quick Stats</h3>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-content" id="newsCard">
+                <h3>Administration</h3>
+            </div>
+        </div>
     </div>
 
     <div class="settings-overlay" id="settingsOverlay" role="dialog" aria-hidden="true">
         <div class="settings-modal">
             <div class="settings-header">Settings</div>
-            <div class="info-notice">
-                <strong>✓ Persistent Storage Enabled</strong><br>
-                Your settings are automatically saved and will persist across browser sessions.
-            </div>
             
             <div class="settings-section">
                 <h3>Weather Location</h3>
@@ -418,10 +479,10 @@
             <div class="settings-section">
                 <h3>Schedule Presets</h3>
                 <div class="preset-buttons">
-                    <button class="btn preset-btn" onclick="applyPreset('normal')">Normal</button>
-                    <button class="btn preset-btn" onclick="applyPreset('homeroom')">Homeroom</button>
-                    <button class="btn preset-btn" onclick="applyPreset('extendedHomeroom')">Extended Homeroom</button>
-                    <button class="btn preset-btn" onclick="applyPreset('meeting')">Meeting</button>
+                    <button class="preset-btn" onclick="applyPreset('normal')">Normal</button>
+                    <button class="preset-btn" onclick="applyPreset('homeroom')">Homeroom</button>
+                    <button class="preset-btn" onclick="applyPreset('extendedHomeroom')">Extended Homeroom</button>
+                    <button class="preset-btn" onclick="applyPreset('meeting')">Meeting</button>
                 </div>
             </div>
             
@@ -445,11 +506,10 @@
     <script>
         'use strict';
         
-        // Application state
-        const APP_VERSION = '1.0.0';
-        const STORAGE_KEY = 'schoolScheduleSettings';
+        const APP_VERSION = '2.0.0';
+        const STORAGE_KEY = 'schoolDashboardSettings';
         
-        // Default settings configuration
+        // Default settings and presets (same as before)
         const DEFAULT_SETTINGS = {
             city: "New York, NY",
             schedule: [
@@ -468,7 +528,6 @@
             ]
         };
 
-        // Preset schedules
         const PRESET_SCHEDULES = {
             normal: {
                 name: "Normal Schedule",
@@ -542,8 +601,7 @@
                 ]
             }
         };
-        
-        // Application state
+
         let userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
         let weatherData = { temp: '...', description: 'Loading...', loading: true, error: false };
 
@@ -562,6 +620,12 @@
         function getDayName() {
             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             return days[new Date().getDay()];
+        }
+
+        function getMonthName() {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            return months[new Date().getMonth()];
         }
 
         function interpolateColor(color1, color2, factor) {
@@ -583,31 +647,23 @@
             return `rgb(${r}, ${g}, ${b})`;
         }
 
-        // Settings management
+        // Settings management (same as before)
         function loadSettings() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     const parsedSettings = JSON.parse(saved);
-                    
-                    if (parsedSettings.city) {
-                        userSettings.city = parsedSettings.city;
-                    }
-                    
+                    if (parsedSettings.city) userSettings.city = parsedSettings.city;
                     if (parsedSettings.schedule && Array.isArray(parsedSettings.schedule)) {
                         const requiredPeriods = ['Before school', 'Period 1', 'Period 2', 'Period 3', 'Period 4', 'Period 5', 'Period 6', 'Period 7', 'Period 8', 'Period 9', 'Period 10', 'After school'];
                         let validSchedule = true;
-                        
                         for (let periodName of requiredPeriods) {
                             if (!parsedSettings.schedule.find(p => p.name === periodName)) {
                                 validSchedule = false;
                                 break;
                             }
                         }
-                        
-                        if (validSchedule) {
-                            userSettings.schedule = parsedSettings.schedule;
-                        }
+                        if (validSchedule) userSettings.schedule = parsedSettings.schedule;
                     }
                 }
             } catch (error) {
@@ -620,7 +676,7 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(userSettings));
                 return true;
             } catch (error) {
-                console.error('Error saving settings to localStorage:', error);
+                console.error('Error saving settings:', error);
                 return false;
             }
         }
@@ -635,7 +691,7 @@
             }
         }
 
-        // Schedule generation
+        // Schedule functions
         function generateFullSchedule() {
             const fullSchedule = [];
             const periods = userSettings.schedule.filter(p => p.type === 'period');
@@ -644,7 +700,6 @@
             
             for (let i = 0; i < periods.length; i++) {
                 fullSchedule.push(periods[i]);
-                
                 if (i < periods.length - 1) {
                     const currentEnd = periods[i].end;
                     const nextStart = periods[i + 1].start;
@@ -664,14 +719,10 @@
             return fullSchedule;
         }
 
-        function getCurrentSchedule() {
-            return generateFullSchedule();
-        }
-
         function getCurrentPeriod() {
             const now = new Date();
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
-            const schedule = getCurrentSchedule();
+            const schedule = generateFullSchedule();
             
             for (let period of schedule) {
                 const startMinutes = timeToMinutes(period.start);
@@ -684,7 +735,7 @@
             return null;
         }
 
-        // Weather functionality
+        // Weather functions
         function generateSmartMockWeather(location) {
             const now = new Date();
             const month = now.getMonth();
@@ -736,12 +787,7 @@
         async function fetchWeather() {
             const originalCity = userSettings.city.trim();
             if (!originalCity) {
-                weatherData = {
-                    temp: 'Error',
-                    description: 'No city specified',
-                    loading: false,
-                    error: true
-                };
+                weatherData = { temp: 'Error', description: 'No city specified', loading: false, error: true };
                 return;
             }
 
@@ -760,17 +806,13 @@
                     }
                     throw new Error('Invalid response format');
                 },
-                
                 async () => {
                     const response = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=%t`);
                     const temp = await response.text();
                     if (temp && temp.includes('°')) {
                         const response2 = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=%C`);
                         const condition = await response2.text();
-                        return {
-                            temp: temp.trim(),
-                            description: condition.trim() || 'Clear'
-                        };
+                        return { temp: temp.trim(), description: condition.trim() || 'Clear' };
                     }
                     throw new Error('Invalid temperature format');
                 }
@@ -779,42 +821,15 @@
             for (let i = 0; i < weatherServices.length; i++) {
                 try {
                     const result = await weatherServices[i]();
-                    
-                    weatherData = {
-                        temp: result.temp,
-                        description: result.description,
-                        loading: false,
-                        error: false
-                    };
-                    
-                    const weatherError = document.getElementById('weatherError');
-                    if (weatherError) {
-                        weatherError.style.display = 'none';
-                    }
-                    
+                    weatherData = { temp: result.temp, description: result.description, loading: false, error: false };
                     return;
-                    
                 } catch (error) {
                     // Continue to next service
                 }
             }
             
             const mockWeather = generateSmartMockWeather(originalCity);
-            weatherData = {
-                temp: mockWeather.temp,
-                description: mockWeather.description,
-                loading: false,
-                error: false
-            };
-            
-            const weatherError = document.getElementById('weatherError');
-            if (weatherError) {
-                weatherError.innerHTML = `<strong>Note:</strong> Using estimated weather for ${originalCity} (live data unavailable)`;
-                weatherError.style.display = 'block';
-                weatherError.style.background = 'rgba(255, 193, 7, 0.2)';
-                weatherError.style.borderColor = '#ffc107';
-                weatherError.style.color = '#fff3cd';
-            }
+            weatherData = { temp: mockWeather.temp, description: mockWeather.description, loading: false, error: false };
         }
 
         // Background color management
@@ -843,17 +858,347 @@
             }
         }
 
-        // Settings UI functions
+        // Card update functions
+        function getCurrentScheduleType() {
+            // Compare current schedule with presets to determine type
+            const currentPeriods = userSettings.schedule.filter(p => p.type === 'period');
+            
+            for (const [key, preset] of Object.entries(PRESET_SCHEDULES)) {
+                const presetPeriods = preset.schedule.filter(p => p.type === 'period');
+                
+                // Check if schedules match exactly
+                if (currentPeriods.length === presetPeriods.length) {
+                    let matches = true;
+                    for (let i = 0; i < currentPeriods.length; i++) {
+                        const current = currentPeriods[i];
+                        const presetPeriod = presetPeriods[i];
+                        
+                        if (current.name !== presetPeriod.name || 
+                            current.start !== presetPeriod.start || 
+                            current.end !== presetPeriod.end) {
+                            matches = false;
+                            break;
+                        }
+                    }
+                    
+                    if (matches) {
+                        switch (key) {
+                            case 'normal': return 'NORMAL';
+                            case 'homeroom': return 'HOMEROOM';
+                            case 'extendedHomeroom': return 'EXTENDED HOMEROOM';
+                            case 'meeting': return 'MEETING';
+                        }
+                    }
+                }
+            }
+            
+            return null; // Custom schedule, don't show type
+        }
+
+        function updateDateCard() {
+            const now = new Date();
+            const dateCard = document.getElementById('dateCard');
+            const scheduleType = getCurrentScheduleType();
+            
+            if (scheduleType) {
+                dateCard.innerHTML = `
+                    <h3>Today</h3>
+                    <div class="large-text">${getDayName()}</div>
+                    <div class="medium-text">${getMonthName()} ${now.getDate()}</div>
+                    <div class="small-text">${now.getFullYear()}</div>
+                    <div class="small-text" style="color: #81c784; margin-top: 8px;">${scheduleType}</div>
+                `;
+            } else {
+                dateCard.innerHTML = `
+                    <h3>Today</h3>
+                    <div class="large-text">${getDayName()}</div>
+                    <div class="medium-text">${getMonthName()} ${now.getDate()}</div>
+                    <div class="small-text">${now.getFullYear()}</div>
+                `;
+            }
+        }
+
+        function updateWeatherCard() {
+            const weatherCard = document.getElementById('weatherCard');
+            
+            if (weatherData.loading) {
+                weatherCard.innerHTML = `
+                    <h3>Weather</h3>
+                    <div class="medium-text">Loading...</div>
+                `;
+            } else if (weatherData.error) {
+                weatherCard.innerHTML = `
+                    <h3>Weather</h3>
+                    <div class="small-text" style="color: #ff6b6b;">${weatherData.description}</div>
+                    <div class="small-text">${userSettings.city}</div>
+                `;
+            } else {
+                weatherCard.innerHTML = `
+                    <h3>Weather</h3>
+                    <div class="large-text weather-temp">${weatherData.temp}</div>
+                    <div class="medium-text">${weatherData.description}</div>
+                    <div class="small-text">${userSettings.city}</div>
+                `;
+            }
+        }
+
+        function updateSunCard() {
+            const now = new Date();
+            const sunCard = document.getElementById('sunCard');
+            
+            // Calculate approximate sunrise/sunset (simplified)
+            const month = now.getMonth();
+            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            
+            // Very rough approximation for mid-latitudes
+            const sunriseBase = 6 + Math.sin((dayOfYear - 81) * 2 * Math.PI / 365) * 1.5;
+            const sunsetBase = 18 - Math.sin((dayOfYear - 81) * 2 * Math.PI / 365) * 1.5;
+            
+            const sunrise = new Date(now);
+            sunrise.setHours(Math.floor(sunriseBase), (sunriseBase % 1) * 60);
+            
+            const sunset = new Date(now);
+            sunset.setHours(Math.floor(sunsetBase), (sunsetBase % 1) * 60);
+            
+            // Moon phase calculation
+            const moonPhases = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+            const moonIndex = Math.floor(((now.getDate() - 1) / 29.5) * 8) % 8;
+            
+            sunCard.innerHTML = `
+                <h3>Sun & Moon</h3>
+                <div class="medium-text">🌅 ${sunrise.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <div class="medium-text">🌇 ${sunset.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <div class="medium-text">${moonPhases[moonIndex]} Moon</div>
+            `;
+        }
+
+        function updateTimezoneCard() {
+            const now = new Date();
+            const timezoneCard = document.getElementById('timezoneCard');
+            
+            const timezones = [
+                { name: 'LA', tz: 'America/Los_Angeles' },
+                { name: 'NYC', tz: 'America/New_York' },
+                { name: 'London', tz: 'Europe/London' },
+                { name: 'Tokyo', tz: 'Asia/Tokyo' }
+            ];
+            
+            const timezoneHTML = timezones.map(tz => {
+                const time = new Date().toLocaleTimeString('en-US', {
+                    timeZone: tz.tz,
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                return `<div class="timezone-item"><span>${tz.name}</span><span>${time}</span></div>`;
+            }).join('');
+            
+            timezoneCard.innerHTML = `
+                <h3>Time Zones</h3>
+                ${timezoneHTML}
+            `;
+        }
+
+        function updateHolidayCard() {
+            const now = new Date();
+            const holidayCard = document.getElementById('holidayCard');
+            
+            // Simple holiday/special day detection
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            
+            const holidays = {
+                '1-1': '🎉 New Year\'s Day',
+                '2-14': '💕 Valentine\'s Day',
+                '3-17': '🍀 St. Patrick\'s Day',
+                '4-1': '😄 April Fools\' Day',
+                '5-5': '🇲🇽 Cinco de Mayo',
+                '7-4': '🇺🇸 Independence Day',
+                '10-31': '🎃 Halloween',
+                '11-11': '🎖️ Veterans Day',
+                '12-25': '🎄 Christmas Day'
+            };
+            
+            const dateKey = `${month}-${day}`;
+            const holiday = holidays[dateKey];
+            
+            if (holiday) {
+                holidayCard.innerHTML = `
+                    <h3>Today's Special</h3>
+                    <div class="holiday-badge">${holiday}</div>
+                `;
+            } else {
+                // Random "National Day" for fun
+                const nationalDays = [
+                    '🍕 Pizza Day', '📚 Reading Day', '🌳 Tree Day', '🐱 Cat Day',
+                    '☕ Coffee Day', '🎵 Music Day', '🌮 Taco Day', '🍪 Cookie Day'
+                ];
+                const randomDay = nationalDays[day % nationalDays.length];
+                
+                holidayCard.innerHTML = `
+                    <h3>Today's Special</h3>
+                    <div class="medium-text">${randomDay}</div>
+                    <div class="small-text">Celebrate something!</div>
+                `;
+            }
+        }
+
+        function updateProgressCard() {
+            const now = new Date();
+            const progressCard = document.getElementById('progressCard');
+            
+            // Day progress (0-100%)
+            const totalMinutes = 24 * 60;
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const dayProgress = (currentMinutes / totalMinutes) * 100;
+            
+            // Week progress
+            const dayOfWeek = now.getDay(); // 0 = Sunday
+            const weekProgress = (dayOfWeek / 7) * 100;
+            
+            progressCard.innerHTML = `
+                <h3>Day Progress</h3>
+                <div class="small-text">Day: ${Math.round(dayProgress)}%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${dayProgress}%"></div>
+                </div>
+                <div class="small-text">Week: ${Math.round(weekProgress)}%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${weekProgress}%"></div>
+                </div>
+            `;
+        }
+
+        function updateStatsCard() {
+            const now = new Date();
+            const statsCard = document.getElementById('statsCard');
+            
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+            
+            const daysInYear = new Date(now.getFullYear(), 11, 31).getDate() === 31 ? 365 : 366;
+            const weekOfYear = Math.ceil(dayOfYear / 7);
+            
+            statsCard.innerHTML = `
+                <h3>Quick Stats</h3>
+                <div class="medium-text">Day ${dayOfYear} of ${daysInYear}</div>
+                <div class="small-text">Week ${weekOfYear}</div>
+                <div class="small-text">${Math.round((dayOfYear/daysInYear)*100)}% through year</div>
+            `;
+        }
+
+        function updateNewsCard() {
+            const newsCard = document.getElementById('newsCard');
+            
+            // Trump administration dates
+            const inaugurationDate = new Date('2025-01-20'); // January 20, 2025
+            const endDate = new Date('2029-01-20'); // January 20, 2029
+            const now = new Date();
+            
+            // Calculate days
+            const totalDays = Math.floor((endDate - inaugurationDate) / (1000 * 60 * 60 * 24));
+            const daysInto = Math.floor((now - inaugurationDate) / (1000 * 60 * 60 * 24));
+            const daysLeft = Math.floor((endDate - now) / (1000 * 60 * 60 * 24));
+            const percentComplete = Math.max(0, Math.min(100, (daysInto / totalDays) * 100));
+            
+            // Handle cases before/after the term
+            if (now < inaugurationDate) {
+                const daysUntilStart = Math.floor((inaugurationDate - now) / (1000 * 60 * 60 * 24));
+                newsCard.innerHTML = `
+                    <h3>Administration</h3>
+                    <div class="medium-text">Starts in ${daysUntilStart} days</div>
+                    <div class="small-text">January 20, 2025</div>
+                `;
+            } else if (now > endDate) {
+                newsCard.innerHTML = `
+                    <h3>Administration</h3>
+                    <div class="medium-text">Term Completed</div>
+                    <div class="small-text">Ended ${Math.abs(daysLeft)} days ago</div>
+                `;
+            } else {
+                newsCard.innerHTML = `
+                    <h3>Administration</h3>
+                    <div class="medium-text">Day ${daysInto.toLocaleString()}</div>
+                    <div class="small-text">${daysLeft.toLocaleString()} days left</div>
+                    <div class="small-text">${percentComplete.toFixed(1)}% complete</div>
+                    <div class="progress-bar" style="margin-top: 8px;">
+                        <div class="progress-fill" style="width: ${percentComplete}%"></div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateScheduleCard() {
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString();
+            const currentPeriod = getCurrentPeriod();
+            const display = document.getElementById('display');
+            const timeDisplay = document.getElementById('currentTime');
+            
+            updateBackgroundColor(currentPeriod);
+            
+            if (!currentPeriod) {
+                display.innerHTML = '<div class="before-after">Unknown</div>';
+                timeDisplay.textContent = currentTime;
+                return;
+            }
+
+            if (currentPeriod.type === 'before') {
+                display.innerHTML = '<div class="before-after">Before</div>';
+                timeDisplay.textContent = currentTime;
+            } 
+            else if (currentPeriod.type === 'after') {
+                display.innerHTML = '<div class="before-after">After</div>';
+                timeDisplay.textContent = currentTime;
+            }
+            else if (currentPeriod.type === 'passing') {
+                const endMinutes = timeToMinutes(currentPeriod.end);
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                const currentSeconds = now.getSeconds();
+                const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
+                
+                display.innerHTML = `
+                    <div class="status">Passing</div>
+                    <div class="countdown">${formatCountdown(totalSecondsLeft)} to START</div>
+                    <div class="next-info">Next: ${currentPeriod.next}</div>
+                `;
+                timeDisplay.textContent = currentTime;
+            }
+            else if (currentPeriod.type === 'period') {
+                const endMinutes = timeToMinutes(currentPeriod.end);
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                const currentSeconds = now.getSeconds();
+                const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
+                const minutesLeft = Math.floor(totalSecondsLeft / 60);
+                
+                if (minutesLeft <= 15) {
+                    display.innerHTML = `
+                        <div class="status">${currentPeriod.name}</div>
+                        <div class="countdown">${formatCountdown(totalSecondsLeft)} to END</div>
+                    `;
+                    timeDisplay.textContent = currentTime;
+                } else {
+                    display.innerHTML = `
+                        <div class="period-info">${getDayName()}</div>
+                        <div class="status">${currentPeriod.name}</div>
+                        <div class="weather-info">
+                            <span class="weather-temp">${weatherData.temp}</span>
+                            <span>${weatherData.description}</span>
+                        </div>
+                    `;
+                    timeDisplay.textContent = `${formatCountdown(totalSecondsLeft)} to end`;
+                }
+            }
+        }
+
+        // Settings UI functions (same as before)
         function openSettings() {
             document.getElementById('settingsOverlay').style.display = 'flex';
-            document.getElementById('settingsOverlay').setAttribute('aria-hidden', 'false');
             document.getElementById('cityInput').value = userSettings.city;
             generateScheduleInputs();
         }
         
         function closeSettings() {
             document.getElementById('settingsOverlay').style.display = 'none';
-            document.getElementById('settingsOverlay').setAttribute('aria-hidden', 'true');
             clearMessages();
         }
         
@@ -869,10 +1214,10 @@
             
             container.innerHTML = periods.map(period => `
                 <div class="period-input">
-                    <label for="${period.name.replace(' ', '_')}_start">${period.name}:</label>
-                    <input type="time" id="${period.name.replace(' ', '_')}_start" value="${period.start}" data-period="${period.name}" data-field="start" aria-label="${period.name} start time">
+                    <label>${period.name}:</label>
+                    <input type="time" value="${period.start}" data-period="${period.name}" data-field="start">
                     <span>to</span>
-                    <input type="time" id="${period.name.replace(' ', '_')}_end" value="${period.end}" data-period="${period.name}" data-field="end" aria-label="${period.name} end time">
+                    <input type="time" value="${period.end}" data-period="${period.name}" data-field="end">
                 </div>
             `).join('');
         }
@@ -880,23 +1225,13 @@
         function applyPreset(presetKey) {
             if (PRESET_SCHEDULES[presetKey]) {
                 clearMessages();
-                
-                // Apply the preset schedule
                 userSettings.schedule = JSON.parse(JSON.stringify(PRESET_SCHEDULES[presetKey].schedule));
-                
-                // Regenerate the schedule inputs to show the new times
                 generateScheduleInputs();
+                updateDateCard(); // Update date card to show new schedule type immediately
                 
-                // Show success message
                 const successMsg = document.getElementById('successMessage');
                 successMsg.textContent = `${PRESET_SCHEDULES[presetKey].name} applied! Click Save to confirm.`;
                 successMsg.style.display = 'block';
-                
-                // Scroll to the schedule inputs so user can see the changes
-                document.getElementById('scheduleInputs').scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'nearest' 
-                });
             }
         }
         
@@ -972,16 +1307,16 @@
             const savedSuccessfully = saveSettingsToStorage();
             
             const successMsg = document.getElementById('successMessage');
-            if (savedSuccessfully) {
-                successMsg.textContent = 'Settings saved successfully and will persist across browser sessions!';
-            } else {
-                successMsg.textContent = 'Settings saved for this session (localStorage unavailable)';
-                successMsg.style.background = 'rgba(255, 193, 7, 0.2)';
-                successMsg.style.borderColor = '#ffc107';
-            }
+            successMsg.textContent = savedSuccessfully ? 
+                'Settings saved successfully!' : 
+                'Settings saved for this session (localStorage unavailable)';
             successMsg.style.display = 'block';
             
-            fetchWeather();
+            // If city changed, fetch new weather and update weather card
+            fetchWeather().then(() => {
+                updateWeatherCard();
+            });
+            updateDateCard(); // Update date card to show new schedule type
             
             setTimeout(() => {
                 closeSettings();
@@ -992,9 +1327,11 @@
             if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
                 clearSavedSettings();
                 userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-                
                 openSettings();
-                fetchWeather();
+                fetchWeather().then(() => {
+                    updateWeatherCard();
+                });
+                updateDateCard(); // Update date card to show schedule type
                 
                 const successMsg = document.getElementById('successMessage');
                 successMsg.textContent = 'All settings have been reset to defaults!';
@@ -1015,7 +1352,7 @@
                 
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(dataBlob);
-                link.download = `school-schedule-backup-${new Date().toISOString().split('T')[0]}.json`;
+                link.download = `school-dashboard-backup-${new Date().toISOString().split('T')[0]}.json`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -1049,10 +1386,13 @@
                             userSettings = importData.settings;
                             saveSettingsToStorage();
                             openSettings();
-                            fetchWeather();
+                            fetchWeather().then(() => {
+                                updateWeatherCard();
+                            });
+                            updateDateCard(); // Update date card to show schedule type
                             
                             const successMsg = document.getElementById('successMessage');
-                            successMsg.textContent = `Settings imported successfully from ${importData.exported ? new Date(importData.exported).toLocaleDateString() : 'backup'}!`;
+                            successMsg.textContent = 'Settings imported successfully!';
                             successMsg.style.display = 'block';
                         } else {
                             throw new Error('Invalid settings file format');
@@ -1069,73 +1409,17 @@
             input.click();
         }
 
-        // Main display update function
-        function updateDisplay() {
-            const now = new Date();
-            const currentTime = now.toLocaleTimeString();
-            const currentPeriod = getCurrentPeriod();
-            const display = document.getElementById('display');
-            const timeDisplay = document.getElementById('currentTime');
-            
-            updateBackgroundColor(currentPeriod);
-            
-            if (!currentPeriod) {
-                display.innerHTML = '<div class="before-after">Unknown</div>';
-                timeDisplay.textContent = currentTime;
-                return;
-            }
-
-            if (currentPeriod.type === 'before') {
-                display.innerHTML = '<div class="before-after">Before</div>';
-                timeDisplay.textContent = currentTime;
-            } 
-            else if (currentPeriod.type === 'after') {
-                display.innerHTML = '<div class="before-after">After</div>';
-                timeDisplay.textContent = currentTime;
-            }
-            else if (currentPeriod.type === 'passing') {
-                const endMinutes = timeToMinutes(currentPeriod.end);
-                const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                const currentSeconds = now.getSeconds();
-                const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
-                
-                display.innerHTML = `
-                    <div class="status">Passing Period</div>
-                    <div class="countdown">${formatCountdown(totalSecondsLeft)} to START</div>
-                    <div class="next-info">Next: ${currentPeriod.next}</div>
-                `;
-                timeDisplay.textContent = currentTime;
-            }
-            else if (currentPeriod.type === 'period') {
-                const endMinutes = timeToMinutes(currentPeriod.end);
-                const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                const currentSeconds = now.getSeconds();
-                const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
-                const minutesLeft = Math.floor(totalSecondsLeft / 60);
-                
-                if (minutesLeft <= 15) {
-                    display.innerHTML = `
-                        <div class="status">${currentPeriod.name}</div>
-                        <div class="countdown">${formatCountdown(totalSecondsLeft)} to END</div>
-                    `;
-                    timeDisplay.textContent = currentTime;
-                } else {
-                    const weatherDisplay = weatherData.error ? 
-                        `<span class="weather-error">${weatherData.description}</span>` :
-                        `<span class="weather-temp">${weatherData.temp}</span>
-                         <span>${weatherData.description}</span>`;
-                        
-                    display.innerHTML = `
-                        <div class="period-info">${getDayName()}</div>
-                        <div class="status">${currentPeriod.name}</div>
-                        <div class="weather-info">
-                            ${weatherDisplay}
-                        </div>
-                    `;
-                    
-                    timeDisplay.textContent = `${formatCountdown(totalSecondsLeft)} to end`;
-                }
-            }
+        // Main update function
+        function updateAllCards() {
+            updateDateCard();
+            updateWeatherCard();
+            updateSunCard();
+            updateTimezoneCard();
+            updateHolidayCard();
+            updateProgressCard();
+            updateStatsCard();
+            updateNewsCard(); // Administration tracker
+            updateScheduleCard();
         }
 
         // Keyboard shortcuts
@@ -1151,10 +1435,29 @@
         // Initialize application
         function initializeApp() {
             loadSettings();
-            fetchWeather();
-            updateDisplay();
-            setInterval(updateDisplay, 1000);
-            setInterval(fetchWeather, 600000); // Refresh weather every 10 minutes
+            fetchWeather().then(() => {
+                updateWeatherCard(); // Update weather card after initial fetch
+            });
+            updateAllCards();
+            
+            // Update schedule every second, other cards every minute
+            setInterval(updateScheduleCard, 1000);
+            setInterval(() => {
+                updateDateCard();
+                updateWeatherCard(); // Add weather card to regular updates
+                updateSunCard();
+                updateTimezoneCard();
+                updateProgressCard();
+                updateStatsCard();
+                updateNewsCard(); // Update administration tracker daily
+            }, 60000);
+            
+            // Update weather every 10 minutes
+            setInterval(() => {
+                fetchWeather().then(() => {
+                    updateWeatherCard(); // Update weather card immediately when new data arrives
+                });
+            }, 600000);
         }
 
         // Start the application
