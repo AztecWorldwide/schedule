@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Real-time school schedule tracker with customizable periods, weather integration, and persistent settings.">
+    <meta name="keywords" content="school schedule, period tracker, class timer, student planner">
+    <meta name="author" content="School Schedule Tracker">
+    <title>School Schedule Tracker</title>
+    
+    <!-- Favicon placeholder - replace with your own -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: background 1s ease;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+            max-width: 90vw;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status {
+            font-size: clamp(2em, 5vw, 3em);
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+        
+        .countdown {
+            font-size: clamp(3em, 8vw, 4em);
+            font-weight: bold;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
+            line-height: 1.1;
+        }
+        
+        .period-info {
+            font-size: clamp(1.2em, 3vw, 1.5em);
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+        
+        .next-info {
+            font-size: clamp(1.1em, 3vw, 1.3em);
+            margin-top: 15px;
+            color: #81c784;
+            font-weight: bold;
+        }
+        
+        .current-time {
+            font-size: clamp(1em, 2.5vw, 1.2em);
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+        
+        .before-after {
+            font-size: clamp(4em, 10vw, 5em);
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            line-height: 1;
+        }
+        
+        .weather-info {
+            font-size: clamp(1em, 2.5vw, 1.2em);
+            margin: 10px 0;
+            color: #b3e5fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .weather-temp {
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+        
+        .weather-error {
+            color: #ff6b6b;
+            font-style: italic;
+        }
+        
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .settings-modal {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .settings-header {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .settings-section {
+            margin-bottom: 25px;
+        }
+        
+        .settings-section h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #81c784;
+        }
+        
+        .period-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+        
+        .period-input label {
+            width: 100px;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+        
+        .period-input input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            padding: 5px 10px;
+            color: white;
+            width: 70px;
+            flex-shrink: 0;
+        }
+        
+        .period-input input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .city-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            font-size: 1em;
+        }
+        
+        .city-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .settings-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .btn-save {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #ffcdd2;
+            font-size: 0.9em;
+            display: none;
+            line-height: 1.4;
+        }
+        
+        .success-message {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #c8e6c9;
+            font-size: 0.9em;
+            display: none;
+            line-height: 1.4;
+        }
+        
+        .info-notice {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 15px;
+            font-size: 0.85em;
+            color: #c8e6c9;
+            line-height: 1.3;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .settings-btn {
+                top: 10px;
+                right: 10px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.3em;
+            }
+            
+            .settings-modal {
+                padding: 20px;
+            }
+            
+            .period-input label {
+                width: 80px;
+                font-size: 0.8em;
+            }
+            
+            .period-input input {
+                width: 60px;
+                padding: 4px 6px;
+                font-size: 0.9em;
+            }
+            
+            .period-input {
+                gap: 8px;
+            }
+            
+            .settings-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .period-input label {
+                width: 70px;
+                font-size: 0.75em;
+            }
+            
+            .period-input input {
+                width: 55px;
+                padding: 3px 5px;
+            }
+            
+            .period-input {
+                gap: 6px;
+            }
+            
+            .period-input span {
+                font-size: 0.8em;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .city-input, .period-input input {
+                background: rgba(255, 255, 255, 0.15);
+                border-color: rgba(255, 255, 255, 0.4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="settings-btn" onclick="openSettings()" aria-label="Open Settings">⚙️</button>
+    
+    <div class="container">
+        <div id="display" role="main" aria-live="polite"></div>
+        <div class="current-time" id="currentTime" aria-live="polite"></div>
+    </div>
+
+    <div class="settings-overlay" id="settingsOverlay" role="dialog" aria-hidden="true">
+        <div class="settings-modal">
+            <div class="settings-header">Settings</div>
+            <div class="info-notice">
+                <strong>✓ Persistent Storage Enabled</strong><br>
+                Your settings are automatically saved and will persist across browser sessions.
+            </div>
+            
+            <div class="settings-section">
+                <h3>Weather Location</h3>
+                <input type="text" class="city-input" id="cityInput" 
+                       placeholder="Enter location (e.g., New York NY, 10001, London)" 
+                       value="New York, NY" aria-label="Weather location">
+                <div class="error-message" id="weatherError" role="alert"></div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Period Schedule</h3>
+                <div id="scheduleInputs"></div>
+                <div class="error-message" id="scheduleError" role="alert"></div>
+                <div class="success-message" id="successMessage" role="status"></div>
+            </div>
+            
+            <div class="settings-buttons">
+                <button class="btn btn-save" onclick="saveSettings()">Save</button>
+                <button class="btn btn-cancel" onclick="closeSettings()">Cancel</button>
+                <button class="btn btn-cancel" onclick="exportSettings()" style="background: #2196f3;">Export</button>
+                <button class="btn btn-cancel" onclick="importSettings()" style="background: #ff9800;">Import</button>
+                <button class="btn btn-cancel" onclick="resetSettings()" style="background: #f44336;">Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+        
+        // Application state
+        const APP_VERSION = '1.0.0';
+        const STORAGE_KEY = 'schoolScheduleSettings';
+        
+        // Default settings configuration
+        const DEFAULT_SETTINGS = {
+            city: "New York, NY",
+            schedule: [
+                { name: "Before school", start: "00:00", end: "08:00", type: "before" },
+                { name: "Period 1", start: "08:00", end: "08:41", type: "period" },
+                { name: "Period 2", start: "08:45", end: "09:26", type: "period" },
+                { name: "Period 3", start: "09:31", end: "10:15", type: "period" },
+                { name: "Period 4", start: "10:20", end: "11:01", type: "period" },
+                { name: "Period 5", start: "11:06", end: "11:47", type: "period" },
+                { name: "Period 6", start: "11:52", end: "12:33", type: "period" },
+                { name: "Period 7", start: "12:38", end: "13:19", type: "period" },
+                { name: "Period 8", start: "13:24", end: "14:05", type: "period" },
+                { name: "Period 9", start: "14:09", end: "14:50", type: "period" },
+                { name: "Period 10", start: "14:54", end: "15:35", type: "period" },
+                { name: "After school", start: "15:35", end: "23:59", type: "after" }
+            ]
+        };
+        
+        // Application state
+        let userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+        let weatherData = { temp: '...', description: 'Loading...', loading: true, error: false };
+
+        // Utility functions
+        function timeToMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function formatCountdown(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function getDayName() {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return days[new Date().getDay()];
+        }
+
+        function interpolateColor(color1, color2, factor) {
+            const hex1 = color1.replace('#', '');
+            const hex2 = color2.replace('#', '');
+            
+            const r1 = parseInt(hex1.substr(0, 2), 16);
+            const g1 = parseInt(hex1.substr(2, 2), 16);
+            const b1 = parseInt(hex1.substr(4, 2), 16);
+            
+            const r2 = parseInt(hex2.substr(0, 2), 16);
+            const g2 = parseInt(hex2.substr(2, 2), 16);
+            const b2 = parseInt(hex2.substr(4, 2), 16);
+            
+            const r = Math.round(r1 + (r2 - r1) * factor);
+            const g = Math.round(g1 + (g2 - g1) * factor);
+            const b = Math.round(b1 + (b2 - b1) * factor);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Settings management
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsedSettings = JSON.parse(saved);
+                    
+                    if (parsedSettings.city) {
+                        userSettings.city = parsedSettings.city;
+                    }
+                    
+                    if (parsedSettings.schedule && Array.isArray(parsedSettings.schedule)) {
+                        const requiredPeriods = ['Before school', 'Period 1', 'Period 2', 'Period 3', 'Period 4', 'Period 5', 'Period 6', 'Period 7', 'Period 8', 'Period 9', 'Period 10', 'After school'];
+                        let validSchedule = true;
+                        
+                        for (let periodName of requiredPeriods) {
+                            if (!parsedSettings.schedule.find(p => p.name === periodName)) {
+                                validSchedule = false;
+                                break;
+                            }
+                        }
+                        
+                        if (validSchedule) {
+                            userSettings.schedule = parsedSettings.schedule;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.warn('Error loading settings, using defaults:', error);
+            }
+        }
+
+        function saveSettingsToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(userSettings));
+                return true;
+            } catch (error) {
+                console.error('Error saving settings to localStorage:', error);
+                return false;
+            }
+        }
+
+        function clearSavedSettings() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+                return true;
+            } catch (error) {
+                console.error('Error clearing settings:', error);
+                return false;
+            }
+        }
+
+        // Schedule generation
+        function generateFullSchedule() {
+            const fullSchedule = [];
+            const periods = userSettings.schedule.filter(p => p.type === 'period');
+            
+            fullSchedule.push(userSettings.schedule.find(p => p.type === 'before'));
+            
+            for (let i = 0; i < periods.length; i++) {
+                fullSchedule.push(periods[i]);
+                
+                if (i < periods.length - 1) {
+                    const currentEnd = periods[i].end;
+                    const nextStart = periods[i + 1].start;
+                    const nextPeriodName = periods[i + 1].name;
+                    
+                    fullSchedule.push({
+                        name: "Passing",
+                        start: currentEnd,
+                        end: nextStart,
+                        type: "passing",
+                        next: nextPeriodName
+                    });
+                }
+            }
+            
+            fullSchedule.push(userSettings.schedule.find(p => p.type === 'after'));
+            return fullSchedule;
+        }
+
+        function getCurrentSchedule() {
+            return generateFullSchedule();
+        }
+
+        function getCurrentPeriod() {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const schedule = getCurrentSchedule();
+            
+            for (let period of schedule) {
+                const startMinutes = timeToMinutes(period.start);
+                const endMinutes = timeToMinutes(period.end);
+                
+                if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+                    return period;
+                }
+            }
+            return null;
+        }
+
+        // Weather functionality
+        function generateSmartMockWeather(location) {
+            const now = new Date();
+            const month = now.getMonth();
+            const day = now.getDate();
+            
+            let seed = 0;
+            for (let i = 0; i < location.length; i++) {
+                seed += location.charCodeAt(i);
+            }
+            seed += day + month * 31;
+            
+            function seededRandom() {
+                seed = (seed * 9301 + 49297) % 233280;
+                return seed / 233280;
+            }
+            
+            const monthlyTemps = [32, 38, 48, 58, 68, 78, 82, 80, 72, 62, 48, 36];
+            let baseTemp = monthlyTemps[month];
+            
+            const locationLower = location.toLowerCase();
+            if (locationLower.includes('florida') || locationLower.includes('miami') || locationLower.includes('phoenix')) {
+                baseTemp += 15;
+            } else if (locationLower.includes('alaska') || locationLower.includes('minnesot') || locationLower.includes('maine')) {
+                baseTemp -= 15;
+            } else if (locationLower.includes('california') || locationLower.includes('san diego')) {
+                baseTemp += 8;
+            } else if (locationLower.includes('texas') || locationLower.includes('arizona')) {
+                baseTemp += 10;
+            }
+            
+            const tempVariation = Math.floor(seededRandom() * 16) - 8;
+            const finalTemp = Math.max(0, baseTemp + tempVariation);
+            
+            const conditions = ['Clear', 'Partly Cloudy', 'Cloudy', 'Light Rain', 'Sunny'];
+            const winterConditions = ['Cloudy', 'Snow', 'Clear', 'Overcast', 'Light Snow'];
+            
+            let weatherConditions = month >= 11 || month <= 2 ? winterConditions : conditions;
+            if (baseTemp > 75) weatherConditions = ['Sunny', 'Clear', 'Partly Cloudy', 'Hot'];
+            
+            const conditionIndex = Math.floor(seededRandom() * weatherConditions.length);
+            const condition = weatherConditions[conditionIndex];
+            
+            return {
+                temp: `${finalTemp}°F`,
+                description: condition
+            };
+        }
+
+        async function fetchWeather() {
+            const originalCity = userSettings.city.trim();
+            if (!originalCity) {
+                weatherData = {
+                    temp: 'Error',
+                    description: 'No city specified',
+                    loading: false,
+                    error: true
+                };
+                return;
+            }
+
+            const weatherServices = [
+                async () => {
+                    const response = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=3`);
+                    const text = await response.text();
+                    if (text && text.includes('°')) {
+                        const parts = text.split(':');
+                        if (parts.length >= 2) {
+                            return {
+                                temp: parts[1].split(' ')[1] || 'N/A',
+                                description: parts[1].split(' ').slice(2).join(' ') || 'Clear'
+                            };
+                        }
+                    }
+                    throw new Error('Invalid response format');
+                },
+                
+                async () => {
+                    const response = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=%t`);
+                    const temp = await response.text();
+                    if (temp && temp.includes('°')) {
+                        const response2 = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=%C`);
+                        const condition = await response2.text();
+                        return {
+                            temp: temp.trim(),
+                            description: condition.trim() || 'Clear'
+                        };
+                    }
+                    throw new Error('Invalid temperature format');
+                }
+            ];
+
+            for (let i = 0; i < weatherServices.length; i++) {
+                try {
+                    const result = await weatherServices[i]();
+                    
+                    weatherData = {
+                        temp: result.temp,
+                        description: result.description,
+                        loading: false,
+                        error: false
+                    };
+                    
+                    const weatherError = document.getElementById('weatherError');
+                    if (weatherError) {
+                        weatherError.style.display = 'none';
+                    }
+                    
+                    return;
+                    
+                } catch (error) {
+                    // Continue to next service
+                }
+            }
+            
+            const mockWeather = generateSmartMockWeather(originalCity);
+            weatherData = {
+                temp: mockWeather.temp,
+                description: mockWeather.description,
+                loading: false,
+                error: false
+            };
+            
+            const weatherError = document.getElementById('weatherError');
+            if (weatherError) {
+                weatherError.innerHTML = `<strong>Note:</strong> Using estimated weather for ${originalCity} (live data unavailable)`;
+                weatherError.style.display = 'block';
+                weatherError.style.background = 'rgba(255, 193, 7, 0.2)';
+                weatherError.style.borderColor = '#ffc107';
+                weatherError.style.color = '#fff3cd';
+            }
+        }
+
+        // Background color management
+        function updateBackgroundColor(currentPeriod) {
+            const body = document.body;
+            
+            if (currentPeriod && currentPeriod.type === 'period') {
+                const now = new Date();
+                const startMinutes = timeToMinutes(currentPeriod.start);
+                const endMinutes = timeToMinutes(currentPeriod.end);
+                const currentMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+                
+                const progress = Math.max(0, Math.min(1, (currentMinutes - startMinutes) / (endMinutes - startMinutes)));
+                
+                const startColor1 = '#667eea';
+                const startColor2 = '#764ba2';
+                const endColor1 = '#ff6b6b';
+                const endColor2 = '#c44569';
+                
+                const color1 = interpolateColor(startColor1, endColor1, progress);
+                const color2 = interpolateColor(startColor2, endColor2, progress);
+                
+                body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+            } else {
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        }
+
+        // Settings UI functions
+        function openSettings() {
+            document.getElementById('settingsOverlay').style.display = 'flex';
+            document.getElementById('settingsOverlay').setAttribute('aria-hidden', 'false');
+            document.getElementById('cityInput').value = userSettings.city;
+            generateScheduleInputs();
+        }
+        
+        function closeSettings() {
+            document.getElementById('settingsOverlay').style.display = 'none';
+            document.getElementById('settingsOverlay').setAttribute('aria-hidden', 'true');
+            clearMessages();
+        }
+        
+        function clearMessages() {
+            document.getElementById('scheduleError').style.display = 'none';
+            document.getElementById('weatherError').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function generateScheduleInputs() {
+            const container = document.getElementById('scheduleInputs');
+            const periods = userSettings.schedule.filter(p => p.type === 'period');
+            
+            container.innerHTML = periods.map(period => `
+                <div class="period-input">
+                    <label for="${period.name.replace(' ', '_')}_start">${period.name}:</label>
+                    <input type="time" id="${period.name.replace(' ', '_')}_start" value="${period.start}" data-period="${period.name}" data-field="start" aria-label="${period.name} start time">
+                    <span>to</span>
+                    <input type="time" id="${period.name.replace(' ', '_')}_end" value="${period.end}" data-period="${period.name}" data-field="end" aria-label="${period.name} end time">
+                </div>
+            `).join('');
+        }
+        
+        function validateSchedule(periods) {
+            const errors = [];
+            const sortedPeriods = [...periods].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+            
+            for (let i = 0; i < sortedPeriods.length; i++) {
+                const period = sortedPeriods[i];
+                const startMin = timeToMinutes(period.start);
+                const endMin = timeToMinutes(period.end);
+                
+                if (startMin >= endMin) {
+                    errors.push(`${period.name} ends before or at the same time it starts`);
+                }
+                
+                if (i < sortedPeriods.length - 1) {
+                    const nextPeriod = sortedPeriods[i + 1];
+                    const nextStartMin = timeToMinutes(nextPeriod.start);
+                    
+                    if (endMin > nextStartMin) {
+                        errors.push(`${period.name} overlaps with ${nextPeriod.name}`);
+                    }
+                }
+                
+                if (endMin - startMin < 5) {
+                    errors.push(`${period.name} is too short (less than 5 minutes)`);
+                }
+                
+                if (endMin - startMin > 120) {
+                    errors.push(`${period.name} is very long (more than 2 hours)`);
+                }
+            }
+            
+            return errors;
+        }
+
+        function saveSettings() {
+            clearMessages();
+            
+            const newCity = document.getElementById('cityInput').value || 'New York, NY';
+            const tempSchedule = [...userSettings.schedule];
+            const inputs = document.querySelectorAll('#scheduleInputs input');
+            
+            inputs.forEach(input => {
+                const periodName = input.dataset.period;
+                const field = input.dataset.field;
+                const period = tempSchedule.find(p => p.name === periodName);
+                if (period && input.value) {
+                    period[field] = input.value;
+                }
+            });
+            
+            const periods = tempSchedule.filter(p => p.type === 'period');
+            const scheduleErrors = validateSchedule(periods);
+            
+            if (scheduleErrors.length > 0) {
+                const errorMsg = document.getElementById('scheduleError');
+                errorMsg.innerHTML = '<strong>Schedule Errors:</strong><br>' + scheduleErrors.join('<br>');
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            userSettings.city = newCity;
+            userSettings.schedule = tempSchedule;
+            
+            const lastPeriod = userSettings.schedule.filter(p => p.type === 'period').pop();
+            const afterSchool = userSettings.schedule.find(p => p.type === 'after');
+            if (lastPeriod && afterSchool) {
+                afterSchool.start = lastPeriod.end;
+            }
+            
+            const savedSuccessfully = saveSettingsToStorage();
+            
+            const successMsg = document.getElementById('successMessage');
+            if (savedSuccessfully) {
+                successMsg.textContent = 'Settings saved successfully and will persist across browser sessions!';
+            } else {
+                successMsg.textContent = 'Settings saved for this session (localStorage unavailable)';
+                successMsg.style.background = 'rgba(255, 193, 7, 0.2)';
+                successMsg.style.borderColor = '#ffc107';
+            }
+            successMsg.style.display = 'block';
+            
+            fetchWeather();
+            
+            setTimeout(() => {
+                closeSettings();
+            }, 2000);
+        }
+        
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
+                clearSavedSettings();
+                userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+                
+                openSettings();
+                fetchWeather();
+                
+                const successMsg = document.getElementById('successMessage');
+                successMsg.textContent = 'All settings have been reset to defaults!';
+                successMsg.style.display = 'block';
+            }
+        }
+        
+        function exportSettings() {
+            try {
+                const exportData = {
+                    version: APP_VERSION,
+                    exported: new Date().toISOString(),
+                    settings: userSettings
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `school-schedule-backup-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                const successMsg = document.getElementById('successMessage');
+                successMsg.textContent = 'Settings exported successfully!';
+                successMsg.style.display = 'block';
+                
+            } catch (error) {
+                const errorMsg = document.getElementById('scheduleError');
+                errorMsg.textContent = 'Error exporting settings: ' + error.message;
+                errorMsg.style.display = 'block';
+            }
+        }
+        
+        function importSettings() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importData = JSON.parse(e.target.result);
+                        
+                        if (importData.settings && importData.settings.city && importData.settings.schedule) {
+                            userSettings = importData.settings;
+                            saveSettingsToStorage();
+                            openSettings();
+                            fetchWeather();
+                            
+                            const successMsg = document.getElementById('successMessage');
+                            successMsg.textContent = `Settings imported successfully from ${importData.exported ? new Date(importData.exported).toLocaleDateString() : 'backup'}!`;
+                            successMsg.style.display = 'block';
+                        } else {
+                            throw new Error('Invalid settings file format');
+                        }
+                    } catch (error) {
+                        const errorMsg = document.getElementById('scheduleError');
+                        errorMsg.textContent = 'Error importing settings: ' + error.message;
+                        errorMsg.style.display = 'block';
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Main display update function
+        function updateDisplay() {
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString();
+            const currentPeriod = getCurrentPeriod();
+            const display = document.getElementById('display');
+            const timeDisplay = document.getElementById('currentTime');
+            
+            updateBackgroundColor(currentPeriod);
+            
+            if (!currentPeriod) {
+                display.innerHTML = '<div class="before-after">Unknown</div>';
+                timeDisplay.textContent = currentTime;
+                return;
+            }
+
+            if (currentPeriod.type === 'before') {
+                display.innerHTML = '<div class="before-after">Before</div>';
+                timeDisplay.textContent = currentTime;
+            } 
+            else if (currentPeriod.type === 'after') {
+                display.innerHTML = '<div class="before-after">After</div>';
+                timeDisplay.textContent = currentTime;
+            }
+            else if (currentPeriod.type === 'passing') {
+                const endMinutes = timeToMinutes(currentPeriod.end);
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                const currentSeconds = now.getSeconds();
+                const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
+                
+                display.innerHTML = `
+                    <div class="status">Passing Period</div>
+                    <div class="countdown">${formatCountdown(totalSecondsLeft)} to START</div>
+                    <div class="next-info">Next: ${currentPeriod.next}</div>
+                `;
+                timeDisplay.textContent = currentTime;
+            }
+            else if (currentPeriod.type === 'period') {
+                const endMinutes = timeToMinutes(currentPeriod.end);
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                const currentSeconds = now.getSeconds();
+                const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
+                const minutesLeft = Math.floor(totalSecondsLeft / 60);
+                
+                if (minutesLeft <= 15) {
+                    display.innerHTML = `
+                        <div class="status">${currentPeriod.name}</div>
+                        <div class="countdown">${formatCountdown(totalSecondsLeft)} to END</div>
+                    `;
+                    timeDisplay.textContent = currentTime;
+                } else {
+                    const weatherDisplay = weatherData.error ? 
+                        `<span class="weather-error">${weatherData.description}</span>` :
+                        `<span class="weather-temp">${weatherData.temp}</span>
+                         <span>${weatherData.description}</span>`;
+                        
+                    display.innerHTML = `
+                        <div class="period-info">${getDayName()}</div>
+                        <div class="status">${currentPeriod.name}</div>
+                        <div class="weather-info">
+                            ${weatherDisplay}
+                        </div>
+                    `;
+                    
+                    timeDisplay.textContent = `${formatCountdown(totalSecondsLeft)} to end`;
+                }
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSettings();
+            } else if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                openSettings();
+            }
+        });
+
+        // Initialize application
+        function initializeApp() {
+            loadSettings();
+            fetchWeather();
+            updateDisplay();
+            setInterval(updateDisplay, 1000);
+            setInterval(fetchWeather, 600000); // Refresh weather every 10 minutes
+        }
+
+        // Start the application
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+    </script>
+</body>
+</html>
