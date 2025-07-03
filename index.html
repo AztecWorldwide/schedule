@@ -330,6 +330,304 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Celebration Effects */
+        .celebration-halo {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 235, 59, 0.9) 0%, rgba(255, 235, 59, 0.6) 20%, rgba(255, 235, 59, 0.3) 40%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: haloExpand 3s ease-out forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        @keyframes haloExpand {
+            0% {
+                width: 200px;
+                height: 200px;
+                opacity: 1;
+            }
+            100% {
+                width: 2000px;
+                height: 2000px;
+                opacity: 0;
+            }
+        }
+        
+        .confetti-piece {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #ffeb3b;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1001;
+        }
+        
+        .confetti-piece.red { background: #f44336; }
+        .confetti-piece.blue { background: #2196f3; }
+        .confetti-piece.green { background: #4caf50; }
+        .confetti-piece.orange { background: #ff9800; }
+        .confetti-piece.purple { background: #9c27b0; }
+        .confetti-piece.pink { background: #e91e63; }
+        .confetti-piece.cyan { background: #00bcd4; }
+        .confetti-piece.lime { background: #cddc39; }
+        .confetti-piece.indigo { background: #3f51b5; }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        .celebration-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ffeb3b, #ffc107);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            color: #333;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255, 235, 59, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .celebration-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 235, 59, 0.6);
+        }
+        
+        .celebration-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .emergency-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            z-index: 100;
+        }
+        
+        .emergency-btn {
+            background: linear-gradient(45deg, #ff5722, #d32f2f);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255, 87, 34, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .emergency-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
+        }
+        
+        .emergency-options {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 120px;
+        }
+        
+        .emergency-options.show {
+            display: flex;
+        }
+        
+        .emergency-option {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .emergency-option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .emergency-option.lockdown {
+            background: rgba(255, 193, 7, 0.3);
+            border-color: #ffc107;
+        }
+        
+        .emergency-option.shelter {
+            background: rgba(33, 150, 243, 0.3);
+            border-color: #2196f3;
+        }
+        
+        .emergency-option.fire {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+        }
+        
+        .emergency-exit {
+            padding: 6px 12px;
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        
+        .emergency-exit:hover {
+            background: rgba(76, 175, 80, 0.5);
+        }
+        
+        /* Emergency States */
+        .emergency-active .card:not(.schedule-card) {
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .emergency-active .card:not(.schedule-card) .card-content {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .emergency-active .schedule-card {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 500;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .emergency-lockdown .card:not(.schedule-card) {
+            background: #ffeb3b !important;
+            box-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+        }
+        
+        .emergency-shelter .card:not(.schedule-card) {
+            animation: shelterFlash 1s infinite;
+        }
+        
+        @keyframes shelterFlash {
+            0%, 50% { background: #ffeb3b !important; box-shadow: 0 0 20px rgba(255, 235, 59, 0.8); }
+            51%, 100% { background: #2196f3 !important; box-shadow: 0 0 20px rgba(33, 150, 243, 0.8); }
+        }
+        
+        .emergency-fire .card:not(.schedule-card) {
+            background: #f44336 !important;
+            box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
+        }
+        
+        .emergency-lockdown .schedule-card {
+            background: rgba(255, 235, 59, 0.95) !important;
+            box-shadow: 0 0 50px rgba(255, 235, 59, 0.8);
+        }
+        
+        .emergency-shelter .schedule-card {
+            animation: shelterCenterFlash 1s infinite;
+        }
+        
+        @keyframes shelterCenterFlash {
+            0%, 50% { 
+                background: rgba(255, 235, 59, 0.95) !important; 
+                box-shadow: 0 0 50px rgba(255, 235, 59, 0.8);
+            }
+            51%, 100% { 
+                background: rgba(33, 150, 243, 0.95) !important; 
+                box-shadow: 0 0 50px rgba(33, 150, 243, 0.8);
+            }
+        }
+        
+        .emergency-fire .schedule-card {
+            background: rgba(244, 67, 54, 0.95) !important;
+            box-shadow: 0 0 50px rgba(244, 67, 54, 0.8);
+        }
+        
+        .emergency-text {
+            font-size: clamp(4em, 12vw, 8em);
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.2;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+        }
+        
+        .lockdown-text {
+            animation: lockdownFlash 1s infinite;
+        }
+        
+        @keyframes lockdownFlash {
+            0%, 50% { color: #f44336; }
+            51%, 100% { color: #ffeb3b; }
+        }
+        
+        .shelter-text {
+            animation: shelterTextFlash 1s infinite;
+        }
+        
+        @keyframes shelterTextFlash {
+            0%, 50% { color: #ffeb3b; }
+            51%, 100% { color: #2196f3; }
+        }
+        
+        .fire-text {
+            color: white;
+            animation: fireShake 0.5s infinite, fireScale 1s infinite, fireColorFlash 0.8s infinite;
+        }
+        
+        @keyframes fireShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        @keyframes fireScale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        @keyframes fireColorFlash {
+            0%, 50% { color: white; }
+            51%, 100% { color: #ffeb3b; }
+        }
+        
         .holiday-badge {
             background: linear-gradient(45deg, #ff6b6b, #ffa726);
             padding: 5px 10px;
@@ -556,6 +854,44 @@
                 height: 40px;
                 font-size: 1.1em;
             }
+            
+            .celebration-btn {
+                bottom: 80px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.3em;
+            }
+            
+            .emergency-panel {
+                bottom: 15px;
+                left: 15px;
+                padding: 12px;
+            }
+            
+            .emergency-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3em;
+            }
+            
+            .emergency-options {
+                min-width: 100px;
+            }
+            
+            .emergency-option {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+            
+            .emergency-exit {
+                padding: 5px 10px;
+                font-size: 0.7em;
+            }
+            
+            .emergency-text {
+                font-size: clamp(3em, 15vw, 6em);
+            }
         }
         
         @media (max-width: 480px) {
@@ -566,11 +902,60 @@
             .card {
                 padding: 12px;
             }
+            
+            .celebration-btn {
+                bottom: 70px;
+                right: 10px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.2em;
+            }
+            
+            .emergency-panel {
+                bottom: 10px;
+                left: 10px;
+                padding: 10px;
+            }
+            
+            .emergency-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2em;
+            }
+            
+            .emergency-options {
+                min-width: 90px;
+            }
+            
+            .emergency-option {
+                padding: 5px 8px;
+                font-size: 0.75em;
+            }
+            
+            .emergency-exit {
+                padding: 4px 8px;
+                font-size: 0.65em;
+            }
+            
+            .emergency-text {
+                font-size: clamp(2.5em, 20vw, 5em);
+            }
         }
     </style>
 </head>
 <body>
     <button class="settings-btn" onclick="openSettings()" aria-label="Open Settings">⚙️</button>
+    <button class="celebration-btn" onclick="triggerCelebration()" aria-label="Celebrate">🎉</button>
+    
+    <div class="emergency-panel">
+        <button class="emergency-btn" onclick="toggleEmergencyOptions()" aria-label="Emergency">🚨</button>
+        <div class="emergency-options" id="emergencyOptions">
+            <div class="emergency-option lockdown" onclick="activateEmergency('lockdown')">Lockdown</div>
+            <div class="emergency-option shelter" onclick="activateEmergency('shelter')">Shelter-In</div>
+            <div class="emergency-option fire" onclick="activateEmergency('fire')">Fire</div>
+            <div class="emergency-exit" onclick="deactivateEmergency()">Exit Emergency</div>
+        </div>
+    </div>
     
     <div class="dashboard">
         <!-- Row 1 -->
@@ -705,7 +1090,7 @@
     <script>
         'use strict';
         
-        const APP_VERSION = '2.2.0';
+        const APP_VERSION = '2.5.0';
         const STORAGE_KEY = 'schoolDashboardSettings';
         
         // Default settings and presets
@@ -819,6 +1204,9 @@
         let currentAnnouncementIndex = 0;
         let currentAlertIndex = 0;
         let subwayData = [];
+        let lastPeriodEndTime = null; // Track when periods end for celebration
+        let emergencyMode = null; // Track current emergency mode
+        let normalScheduleDisplay = null; // Store normal schedule display
 
         // Card color system
         const cardColors = [
@@ -1441,6 +1829,11 @@
         }
 
         function updateScheduleCard() {
+            // Don't update schedule card if in emergency mode
+            if (emergencyMode) {
+                return;
+            }
+            
             const now = new Date();
             const currentTime = now.toLocaleTimeString();
             const currentPeriod = getCurrentPeriod();
@@ -1448,6 +1841,7 @@
             const timeDisplay = document.getElementById('currentTime');
             
             updateBackgroundColor(currentPeriod);
+            checkPeriodEnd(); // Check for period end to trigger celebration
             
             if (!currentPeriod) {
                 display.innerHTML = '<div class="before-after">Unknown</div>';
@@ -1767,6 +2161,207 @@
             input.click();
         }
 
+        // Celebration effects
+        function triggerCelebration() {
+            // Create radiating halo attached to body for full screen effect
+            const halo = document.createElement('div');
+            halo.className = 'celebration-halo';
+            document.body.appendChild(halo);
+            
+            // Start rainbow card shuffling effect
+            startRainbowCardShuffle();
+            
+            // Create confetti across entire screen
+            const colors = ['', 'red', 'blue', 'green', 'orange', 'purple', 'pink', 'cyan', 'lime', 'indigo'];
+            
+            // Much more confetti for full screen coverage
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = `confetti-piece ${colors[Math.floor(Math.random() * colors.length)]}`;
+                
+                // Random trajectory covering entire screen
+                const angle = (Math.PI * 2 * i) / 80 + (Math.random() - 0.5) * 0.5;
+                const distance = 400 + Math.random() * 800; // Much larger spread
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                confetti.style.setProperty('--x', `${x}px`);
+                confetti.style.setProperty('--y', `${y}px`);
+                confetti.style.animation = `confettiFall ${2 + Math.random() * 2}s ease-out forwards`;
+                confetti.style.animationDelay = `${Math.random() * 0.8}s`;
+                
+                document.body.appendChild(confetti);
+                
+                // Clean up confetti after animation
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.parentNode.removeChild(confetti);
+                    }
+                }, 5000);
+            }
+            
+            // Clean up halo after animation
+            setTimeout(() => {
+                if (halo.parentNode) {
+                    halo.parentNode.removeChild(halo);
+                }
+            }, 3000);
+        }
+        
+        function startRainbowCardShuffle() {
+            const cards = document.querySelectorAll('.card');
+            let shuffleCount = 0;
+            const maxShuffles = 12; // 3 seconds / 0.25 seconds = 12 shuffles
+            
+            // Extended rainbow colors for more variety
+            const rainbowColors = [
+                'rgba(255, 0, 0, 0.4)',     // Red
+                'rgba(255, 127, 0, 0.4)',   // Orange
+                'rgba(255, 255, 0, 0.4)',   // Yellow
+                'rgba(127, 255, 0, 0.4)',   // Spring Green
+                'rgba(0, 255, 0, 0.4)',     // Green
+                'rgba(0, 255, 127, 0.4)',   // Turquoise
+                'rgba(0, 255, 255, 0.4)',   // Cyan
+                'rgba(0, 127, 255, 0.4)',   // Azure
+                'rgba(0, 0, 255, 0.4)',     // Blue
+                'rgba(127, 0, 255, 0.4)',   // Violet
+                'rgba(255, 0, 255, 0.4)',   // Magenta
+                'rgba(255, 0, 127, 0.4)',   // Rose
+                'rgba(255, 192, 203, 0.4)', // Pink
+                'rgba(255, 105, 180, 0.4)', // Hot Pink
+                'rgba(255, 20, 147, 0.4)',  // Deep Pink
+                'rgba(138, 43, 226, 0.4)',  // Blue Violet
+                'rgba(75, 0, 130, 0.4)',    // Indigo
+                'rgba(255, 215, 0, 0.4)',   // Gold
+                'rgba(255, 69, 0, 0.4)',    // Red Orange
+                'rgba(50, 205, 50, 0.4)',   // Lime Green
+            ];
+            
+            const shuffleInterval = setInterval(() => {
+                // Shuffle colors for each card
+                const shuffledColors = [...rainbowColors].sort(() => Math.random() - 0.5);
+                
+                cards.forEach((card, index) => {
+                    const colorIndex = index % shuffledColors.length;
+                    card.style.background = shuffledColors[colorIndex];
+                    card.style.transition = 'background 0.1s ease-in-out';
+                });
+                
+                shuffleCount++;
+                
+                if (shuffleCount >= maxShuffles) {
+                    clearInterval(shuffleInterval);
+                    
+                    // Return cards to normal state after celebration
+                    setTimeout(() => {
+                        applyCardColorSetting();
+                    }, 500);
+                }
+            }, 250); // Every 0.25 seconds
+        }
+        
+        function checkPeriodEnd() {
+            const now = new Date();
+            const currentPeriod = getCurrentPeriod();
+            
+            if (currentPeriod && currentPeriod.type === 'period') {
+                const endMinutes = timeToMinutes(currentPeriod.end);
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                const currentSeconds = now.getSeconds();
+                const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
+                
+                // Trigger celebration when period ends (within 1 second window)
+                if (totalSecondsLeft <= 1 && totalSecondsLeft >= 0) {
+                    const periodEndKey = `${currentPeriod.name}-${now.toDateString()}`;
+                    if (lastPeriodEndTime !== periodEndKey) {
+                        lastPeriodEndTime = periodEndKey;
+                        triggerCelebration();
+                    }
+                }
+            }
+        }
+        
+        // Emergency functions
+        function toggleEmergencyOptions() {
+            const options = document.getElementById('emergencyOptions');
+            options.classList.toggle('show');
+        }
+        
+        function activateEmergency(type) {
+            // Hide emergency options
+            document.getElementById('emergencyOptions').classList.remove('show');
+            
+            // Set emergency mode
+            emergencyMode = type;
+            
+            // Add emergency class to body
+            document.body.classList.add('emergency-active');
+            document.body.classList.add(`emergency-${type}`);
+            
+            // Store the current schedule display
+            const scheduleCard = document.querySelector('.schedule-card .card-content');
+            normalScheduleDisplay = scheduleCard.innerHTML;
+            
+            // Update center card with emergency text
+            let emergencyText = '';
+            let textClass = '';
+            
+            switch(type) {
+                case 'lockdown':
+                    emergencyText = 'LOCKDOWN';
+                    textClass = 'lockdown-text';
+                    break;
+                case 'shelter':
+                    emergencyText = 'SHELTER IN';
+                    textClass = 'shelter-text';
+                    break;
+                case 'fire':
+                    emergencyText = 'FIRE FIRE FIRE';
+                    textClass = 'fire-text';
+                    break;
+            }
+            
+            scheduleCard.innerHTML = `<div class="emergency-text ${textClass}">${emergencyText}</div>`;
+            
+            // Ensure emergency panel stays visible
+            const emergencyPanel = document.querySelector('.emergency-panel');
+            emergencyPanel.style.zIndex = '1000';
+            
+            // Ensure settings and celebration buttons stay visible
+            const settingsBtn = document.querySelector('.settings-btn');
+            const celebrationBtn = document.querySelector('.celebration-btn');
+            settingsBtn.style.zIndex = '1000';
+            celebrationBtn.style.zIndex = '1000';
+        }
+        
+        function deactivateEmergency() {
+            // Hide emergency options
+            document.getElementById('emergencyOptions').classList.remove('show');
+            
+            // Remove emergency classes
+            document.body.classList.remove('emergency-active', 'emergency-lockdown', 'emergency-shelter', 'emergency-fire');
+            
+            // Restore normal schedule display
+            if (normalScheduleDisplay) {
+                const scheduleCard = document.querySelector('.schedule-card .card-content');
+                scheduleCard.innerHTML = normalScheduleDisplay;
+                normalScheduleDisplay = null;
+            }
+            
+            // Reset emergency mode
+            emergencyMode = null;
+            
+            // Reset z-index values
+            const emergencyPanel = document.querySelector('.emergency-panel');
+            const settingsBtn = document.querySelector('.settings-btn');
+            const celebrationBtn = document.querySelector('.celebration-btn');
+            emergencyPanel.style.zIndex = '100';
+            settingsBtn.style.zIndex = '100';
+            celebrationBtn.style.zIndex = '100';
+            
+            // Apply current card color settings
+            applyCardColorSetting();
+        }
         // Announcement cycling functions
         function cycleAnnouncements() {
             if (userSettings.announcements && userSettings.announcements.length > 0) {
@@ -1795,13 +2390,29 @@
             updateScheduleCard();
         }
 
-        // Keyboard shortcuts
+        // Keyboard shortcuts and click handlers
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeSettings();
+                // Close emergency options if open
+                document.getElementById('emergencyOptions').classList.remove('show');
+                // Exit emergency mode if active
+                if (emergencyMode) {
+                    deactivateEmergency();
+                }
             } else if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
                 event.preventDefault();
                 openSettings();
+            }
+        });
+        
+        // Close emergency options when clicking outside
+        document.addEventListener('click', function(event) {
+            const emergencyPanel = document.querySelector('.emergency-panel');
+            const emergencyOptions = document.getElementById('emergencyOptions');
+            
+            if (!emergencyPanel.contains(event.target) && emergencyOptions.classList.contains('show')) {
+                emergencyOptions.classList.remove('show');
             }
         });
 
