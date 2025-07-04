@@ -10,7 +10,7 @@
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         * {
             box-sizing: border-box;
@@ -19,16 +19,17 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-            background: #1a1a1a;
+            font-family: 'Helvetica Neue', 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            background: #000000;
             min-height: 100vh;
             color: #ffffff;
             overflow-x: hidden;
+            font-weight: 500;
         }
         
         .main-container {
             display: grid;
-            grid-template-columns: 2fr 3fr 2fr;
+            grid-template-columns: 280px 1fr 280px;
             grid-template-rows: auto 1fr auto;
             gap: 0;
             height: 100vh;
@@ -40,24 +41,28 @@
         .header-bar {
             grid-column: 1 / -1;
             background: #000000;
-            padding: 12px 20px;
-            border-bottom: 3px solid #fccc0a;
+            padding: 16px 24px;
+            border-bottom: 4px solid #FCCC0A;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         
         .station-name {
-            font-size: 1.8rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: #ffffff;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         
         .current-time-header {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 600;
-            color: #fccc0a;
+            color: #FCCC0A;
             font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
         }
         
         /* Main Schedule Display */
@@ -65,84 +70,97 @@
             grid-column: 2;
             grid-row: 2;
             background: #000000;
-            border-left: 2px solid #333333;
-            border-right: 2px solid #333333;
+            border-left: 3px solid #333333;
+            border-right: 3px solid #333333;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 40px;
+            padding: 48px;
             position: relative;
             overflow: hidden;
         }
         
         .period-header {
-            font-size: 2.5rem;
+            font-size: 2.75rem;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+        
+        .countdown-time {
+            font-size: 5.5rem;
+            font-weight: 900;
+            color: #FCCC0A;
+            margin: 32px 0;
+            font-variant-numeric: tabular-nums;
+            line-height: 0.9;
+            letter-spacing: -2px;
+        }
+        
+        .status-label {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+        
+        .before-after-text {
+            font-size: 4.25rem;
+            font-weight: 900;
+            color: #4ade80;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
-        .countdown-time {
-            font-size: 5rem;
-            font-weight: 900;
-            color: #fccc0a;
-            margin: 30px 0;
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-        }
-        
-        .status-label {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .before-after-text {
-            font-size: 4rem;
-            font-weight: 900;
-            color: #4ade80;
-            text-transform: uppercase;
-        }
-        
         /* Side Panels */
         .info-display {
-            background: #2d2d2d;
+            background: #1a1a1a;
             padding: 0;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            border-top: 2px solid #333333;
+            border-bottom: 2px solid #333333;
         }
         
         .info-section {
-            background: #1a1a1a;
-            margin-bottom: 2px;
-            padding: 16px;
-            min-height: 120px;
+            background: #000000;
+            border-bottom: 2px solid #333333;
+            padding: 18px 20px;
+            min-height: 140px;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
         }
         
+        .info-section:last-child {
+            border-bottom: none;
+        }
+        
         .info-section.cycling {
-            min-height: 140px;
+            min-height: 160px;
         }
         
         .section-header {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #fccc0a;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #FCCC0A;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            border-bottom: 1px solid #333333;
-            padding-bottom: 6px;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #333333;
+            padding-bottom: 8px;
+            background: rgba(252, 204, 10, 0.1);
+            margin: -18px -20px 14px -20px;
+            padding: 8px 20px;
         }
         
         .info-content {
@@ -161,7 +179,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            transition: transform 0.5s ease-in-out;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .content-slide.current {
@@ -177,109 +195,135 @@
         }
         
         .primary-text {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            line-height: 1.2;
         }
         
         .secondary-text {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 500;
             color: #cccccc;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            line-height: 1.3;
         }
         
         .accent-text {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #fccc0a;
+            color: #FCCC0A;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        /* Subway Status */
+        /* Enhanced Subway Status */
         .subway-status {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
-            margin-top: 8px;
+            gap: 6px;
+            margin-top: 12px;
         }
         
         .train-indicator {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             font-weight: 900;
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #ffffff;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
         }
         
-        /* MTA Train Line Colors */
-        .line-4, .line-5, .line-6 { background: #00933c; }
-        .line-N, .line-Q, .line-R, .line-W { background: #fccc0a; color: #000000; }
-        .line-L { background: #a7a9ac; color: #000000; }
-        .line-A, .line-C, .line-E { background: #0039a6; }
-        .line-B, .line-D, .line-F, .line-M { background: #ff6319; }
-        .line-1, .line-2, .line-3 { background: #ee352e; }
-        .line-7 { background: #b933ad; }
+        /* Authentic MTA Train Line Colors */
+        .line-4, .line-5, .line-6 { background: #00933C; }
+        .line-6X { background: #00933C; }
+        .line-N, .line-Q, .line-R, .line-W { background: #FCCC0A; color: #000000; font-weight: 900; }
+        .line-L { background: #A7A9AC; color: #000000; font-weight: 900; }
+        .line-A, .line-C, .line-E { background: #0039A6; }
+        .line-B, .line-D, .line-F, .line-M { background: #FF6319; }
+        .line-1, .line-2, .line-3 { background: #EE352E; }
+        .line-7, .line-7X { background: #B933AD; }
         .line-J, .line-Z { background: #996633; }
+        .line-G { background: #6CBE45; }
+        .line-S { background: #808183; }
         
-        /* Service Status */
-        .status-good { border-color: #4ade80; }
-        .status-delays { border-color: #fccc0a; }
-        .status-service-change { border-color: #ef4444; }
+        /* Enhanced Service Status */
+        .status-good { 
+            border-color: #4ade80; 
+            box-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
+        }
+        .status-delays { 
+            border-color: #FCCC0A; 
+            box-shadow: 0 0 6px rgba(252, 204, 10, 0.4);
+        }
+        .status-service-change { 
+            border-color: #EF4444; 
+            box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+            animation: statusPulse 2s infinite;
+        }
         
-        /* Announcements and Alerts */
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); }
+        }
+        
+        /* Enhanced Announcements and Alerts */
         .announcement-item, .alert-item {
-            padding: 10px;
-            margin: 4px 0;
+            padding: 12px 16px;
+            margin: 6px 0;
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            line-height: 1.3;
+            line-height: 1.4;
             transform: translateX(0);
-            transition: transform 0.5s ease-in-out;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid transparent;
         }
         
         .announcement-item {
-            background: #333333;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
             color: #ffffff;
+            border-left-color: #666666;
         }
         
         .alert-item {
-            background: #fccc0a;
+            background: linear-gradient(135deg, #FCCC0A 0%, #e6b800 100%);
             color: #000000;
             font-weight: 600;
+            border-left-color: #000000;
+            box-shadow: 0 2px 8px rgba(252, 204, 10, 0.3);
         }
         
-        .announcement-item.slide-out {
+        .announcement-item.slide-out, .alert-item.slide-out {
             transform: translateX(-100%);
         }
         
-        .announcement-item.slide-in {
+        .announcement-item.slide-in, .alert-item.slide-in {
             transform: translateX(100%);
         }
         
-        .alert-item.slide-out {
-            transform: translateX(-100%);
-        }
-        
-        .alert-item.slide-in {
-            transform: translateX(100%);
-        }
-        
-        /* Emergency States */
+        /* Emergency States - Enhanced */
         .emergency-active .info-display {
             display: none;
         }
         
         .emergency-active .header-bar {
-            background: #fccc0a;
+            background: #FCCC0A;
             color: #000000;
             border-bottom-color: #000000;
+            animation: emergencyHeaderPulse 3s infinite;
+        }
+        
+        @keyframes emergencyHeaderPulse {
+            0%, 100% { background: #FCCC0A; }
+            50% { background: #ffffff; }
         }
         
         .emergency-active .station-name {
@@ -306,7 +350,7 @@
         }
         
         .emergency-lockdown .schedule-display {
-            background: #fccc0a;
+            background: #FCCC0A;
         }
         
         .emergency-lockdown .schedule-display::before {
@@ -315,8 +359,14 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 8px;
-            background: #000000;
+            height: 12px;
+            background: repeating-linear-gradient(
+                45deg,
+                #000000,
+                #000000 10px,
+                #FCCC0A 10px,
+                #FCCC0A 20px
+            );
         }
         
         .emergency-shelter .schedule-display {
@@ -325,7 +375,7 @@
         }
         
         .emergency-fire .schedule-display {
-            background: #ef4444;
+            background: #EF4444;
             animation: emergencyFlash 1s infinite;
         }
         
@@ -339,45 +389,38 @@
         }
         
         @keyframes emergencyFlash {
-            0%, 50% { background: #ef4444; }
+            0%, 50% { background: #EF4444; }
             51%, 100% { background: #dc2626; }
         }
         
         .emergency-text {
-            font-size: clamp(4rem, 12vw, 8rem);
+            font-size: clamp(4rem, 12vw, 9rem);
             font-weight: 900;
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            line-height: 1;
-            margin-bottom: 20px;
+            letter-spacing: 3px;
+            line-height: 0.9;
+            margin-bottom: 24px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         .emergency-subtext {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-size: clamp(1.5rem, 4vw, 2.8rem);
             font-weight: 700;
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.9;
+            letter-spacing: 2px;
+            opacity: 0.95;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
         
-        .lockdown-text { 
-            color: #000000; 
-        }
-        
-        .shelter-text { 
-            color: #ffffff; 
-        }
-        
+        .lockdown-text { color: #000000; }
+        .shelter-text { color: #ffffff; }
         .fire-text { 
             color: #ffffff; 
             animation: fireShake 0.5s infinite;
         }
-        
-        .special-text { 
-            color: #ffffff; 
-        }
+        .special-text { color: #ffffff; }
         
         @keyframes fireShake {
             0%, 100% { transform: translateX(0); }
@@ -385,87 +428,112 @@
             75% { transform: translateX(8px); }
         }
         
-        /* Emergency Info Bar */
+        /* Enhanced Emergency Info Bar */
         .emergency-info-bar {
             position: absolute;
-            bottom: 40px;
+            bottom: 48px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             color: #ffffff;
-            padding: 16px 32px;
-            border-radius: 4px;
-            font-size: 1.2rem;
+            padding: 20px 40px;
+            border-radius: 6px;
+            font-size: 1.3rem;
             font-weight: 600;
             text-align: center;
-            max-width: 80%;
+            max-width: 85%;
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
         }
         
         .emergency-lockdown .emergency-info-bar {
             background: rgba(0, 0, 0, 0.9);
-            color: #fccc0a;
+            color: #FCCC0A;
+            border-color: #FCCC0A;
         }
         
         .emergency-shelter .emergency-info-bar {
             background: rgba(0, 0, 0, 0.9);
             color: #ffffff;
+            border-color: #0ea5e9;
         }
         
         .emergency-fire .emergency-info-bar {
             background: rgba(0, 0, 0, 0.9);
             color: #ffffff;
+            border-color: #EF4444;
         }
         
         .emergency-special .emergency-info-bar {
             background: rgba(0, 0, 0, 0.9);
             color: #ffffff;
+            border-color: #8b5cf6;
         }
         
-        /* Bottom Status Bar */
+        /* Enhanced Bottom Status Bar */
         .status-bar {
             grid-column: 1 / -1;
             background: #000000;
-            border-top: 2px solid #333333;
-            padding: 8px 20px;
+            border-top: 3px solid #333333;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
         }
         
         .system-time {
             color: #cccccc;
             font-variant-numeric: tabular-nums;
+            font-weight: 500;
         }
         
         .system-status {
             color: #4ade80;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        /* Settings Button */
+        .system-status::before {
+            content: "●";
+            font-size: 1.2rem;
+            animation: statusBlink 2s infinite;
+        }
+        
+        @keyframes statusBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        
+        /* Enhanced Settings Button */
         .settings-btn {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #fccc0a;
+            top: 24px;
+            right: 24px;
+            background: #FCCC0A;
             color: #000000;
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             border-radius: 4px;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 0.8rem;
             cursor: pointer;
             z-index: 100;
             text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         
         .settings-btn:hover {
             background: #ffffff;
+            transform: scale(1.05);
         }
         
-        /* Modals */
+        /* Enhanced Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -478,97 +546,107 @@
             align-items: center;
             z-index: 2000;
             padding: 20px;
+            backdrop-filter: blur(4px);
         }
         
         .modal-content {
             background: #1a1a1a;
-            border: 2px solid #fccc0a;
+            border: 3px solid #FCCC0A;
             max-width: 600px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             color: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
         
         .modal-header {
-            background: #fccc0a;
+            background: #FCCC0A;
             color: #000000;
-            padding: 16px 20px;
-            font-size: 1.2rem;
-            font-weight: 700;
+            padding: 18px 24px;
+            font-size: 1.3rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .modal-body {
-            padding: 20px;
+            padding: 24px;
         }
         
         .form-section {
-            margin-bottom: 24px;
-            border-bottom: 1px solid #333333;
-            padding-bottom: 16px;
+            margin-bottom: 28px;
+            border-bottom: 2px solid #333333;
+            padding-bottom: 20px;
         }
         
         .form-section h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #fccc0a;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #FCCC0A;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
         
         .form-input {
             width: 100%;
             background: #000000;
-            border: 1px solid #333333;
+            border: 2px solid #333333;
             color: #ffffff;
-            padding: 8px 12px;
+            padding: 10px 14px;
             font-family: inherit;
-            border-radius: 2px;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
         
         .form-input:focus {
             outline: none;
-            border-color: #fccc0a;
+            border-color: #FCCC0A;
+            box-shadow: 0 0 0 2px rgba(252, 204, 10, 0.2);
         }
         
         .button-group {
             display: flex;
-            gap: 8px;
-            margin: 12px 0;
+            gap: 10px;
+            margin: 16px 0;
             flex-wrap: wrap;
         }
         
         .btn {
-            padding: 8px 16px;
-            border: 1px solid #333333;
+            padding: 10px 18px;
+            border: 2px solid #333333;
             background: #000000;
             color: #ffffff;
             cursor: pointer;
             font-family: inherit;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.8rem;
-            border-radius: 2px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
         }
         
         .btn-primary {
-            background: #fccc0a;
+            background: #FCCC0A;
             color: #000000;
-            border-color: #fccc0a;
+            border-color: #FCCC0A;
         }
         
         .btn-danger {
-            background: #ef4444;
+            background: #EF4444;
             color: #ffffff;
-            border-color: #ef4444;
+            border-color: #EF4444;
         }
         
         .btn:hover {
-            opacity: 0.8;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         
-        /* Celebration Effects */
+        /* Enhanced Celebration Effects */
         .celebration-halo {
             position: fixed;
             top: 50%;
@@ -599,19 +677,19 @@
             z-index: 1001;
         }
         
-        .confetti-piece.yellow { background: #fccc0a; }
-        .confetti-piece.red { background: #ef4444; }
-        .confetti-piece.blue { background: #0ea5e9; }
-        .confetti-piece.green { background: #4ade80; }
-        .confetti-piece.orange { background: #ff6319; }
-        .confetti-piece.purple { background: #8b5cf6; }
+        .confetti-piece.yellow { background: #FCCC0A; }
+        .confetti-piece.red { background: #EE352E; }
+        .confetti-piece.blue { background: #0039A6; }
+        .confetti-piece.green { background: #00933C; }
+        .confetti-piece.orange { background: #FF6319; }
+        .confetti-piece.purple { background: #B933AD; }
         
         @keyframes confettiFall {
             0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
             100% { transform: translate(var(--x), var(--y)) rotate(720deg); opacity: 0; }
         }
         
-        /* Responsive Design */
+        /* Enhanced Responsive Design */
         @media (max-width: 1024px) {
             .main-container {
                 grid-template-columns: 1fr;
@@ -622,26 +700,28 @@
                 grid-column: 1;
                 grid-row: 3;
                 border: none;
-                border-top: 2px solid #333333;
-                border-bottom: 2px solid #333333;
+                border-top: 3px solid #333333;
+                border-bottom: 3px solid #333333;
             }
             
             .info-display:first-of-type {
                 grid-row: 2;
             }
             
-            .period-header { font-size: 2rem; }
-            .countdown-time { font-size: 3.5rem; }
-            .before-after-text { font-size: 3rem; }
+            .period-header { font-size: 2.2rem; }
+            .countdown-time { font-size: 4rem; }
+            .before-after-text { font-size: 3.5rem; }
         }
         
         @media (max-width: 768px) {
-            .station-name { font-size: 1.4rem; }
-            .current-time-header { font-size: 1rem; }
-            .period-header { font-size: 1.8rem; }
-            .countdown-time { font-size: 3rem; }
-            .info-section { padding: 12px; min-height: 100px; }
-            .primary-text { font-size: 1.2rem; }
+            .station-name { font-size: 1.5rem; }
+            .current-time-header { font-size: 1.1rem; }
+            .period-header { font-size: 1.9rem; }
+            .countdown-time { font-size: 3.2rem; }
+            .info-section { padding: 14px 16px; min-height: 120px; }
+            .primary-text { font-size: 1.3rem; }
+            .subway-status { grid-template-columns: repeat(3, 1fr); }
+            .train-indicator { width: 32px; height: 32px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -726,7 +806,7 @@
         <!-- Bottom Status Bar -->
         <div class="status-bar">
             <div class="system-time" id="bottomTime">System Time: 00:00:00</div>
-            <div class="system-status">● System Operational</div>
+            <div class="system-status">System Operational</div>
         </div>
     </div>
 
@@ -740,7 +820,7 @@
                     <button class="btn btn-primary" onclick="checkCode()">Enter</button>
                     <button class="btn" onclick="closeCodePrompt()">Cancel</button>
                 </div>
-                <div id="codeError" style="color: #ef4444; margin-top: 8px; display: none;">Incorrect code</div>
+                <div id="codeError" style="color: #EF4444; margin-top: 8px; display: none;">Incorrect code</div>
             </div>
         </div>
     </div>
@@ -757,9 +837,9 @@
                 
                 <div id="emergencyOptions" style="display: none; margin: 16px 0;">
                     <div class="button-group">
-                        <button class="btn" onclick="activateEmergency('lockdown')" style="background: #fccc0a; color: #000;">Lockdown</button>
+                        <button class="btn" onclick="activateEmergency('lockdown')" style="background: #FCCC0A; color: #000;">Lockdown</button>
                         <button class="btn" onclick="activateEmergency('shelter')" style="background: #0ea5e9; color: #fff;">Shelter</button>
-                        <button class="btn" onclick="activateEmergency('fire')" style="background: #ef4444; color: #fff;">Fire</button>
+                        <button class="btn" onclick="activateEmergency('fire')" style="background: #EF4444; color: #fff;">Fire</button>
                         <button class="btn" onclick="activateEmergency('special')" style="background: #8b5cf6; color: #fff;">Special Event</button>
                         <button class="btn" onclick="deactivateEmergency()" style="background: #4ade80; color: #000;">Exit Emergency</button>
                     </div>
@@ -806,7 +886,7 @@
     <script>
         'use strict';
         
-        const APP_VERSION = '5.1.0';
+        const APP_VERSION = '5.2.0';
         const STORAGE_KEY = 'schoolDashboardSettings';
         
         // Default settings
@@ -841,13 +921,13 @@
             ]
         };
 
-        // Subway lines for status display
+        // Enhanced subway lines for authentic MTA display
         const SUBWAY_LINES = [
             { name: '4' }, { name: '5' }, { name: '6' }, { name: 'N' },
             { name: 'Q' }, { name: 'R' }, { name: 'W' }, { name: 'L' },
             { name: 'A' }, { name: 'C' }, { name: 'E' }, { name: 'B' },
             { name: 'D' }, { name: 'F' }, { name: 'M' }, { name: '1' },
-            { name: '2' }, { name: '3' }, { name: '7' }, { name: 'J' }
+            { name: '2' }, { name: '3' }, { name: '7' }, { name: 'G' }
         ];
 
         let userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
@@ -885,20 +965,29 @@
             return months[new Date().getMonth()];
         }
 
-        // Generate subway status
+        // Enhanced subway status generation with more realistic patterns
         function generateSubwayData() {
             const statuses = ['good', 'delays', 'service-change'];
             const now = new Date();
+            const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+            const isRushHour = (now.getHours() >= 7 && now.getHours() <= 9) || 
+                             (now.getHours() >= 17 && now.getHours() <= 19);
             
             return SUBWAY_LINES.map(line => {
-                let seed = line.name.charCodeAt(0) + now.getHours();
+                let seed = line.name.charCodeAt(0) + now.getHours() + now.getDate();
                 const random = ((seed * 9301 + 49297) % 233280) / 233280;
-                const isRushHour = (now.getHours() >= 7 && now.getHours() <= 9) || 
-                                 (now.getHours() >= 17 && now.getHours() <= 19);
                 
-                let statusIndex = isRushHour ? 
-                    (random < 0.4 ? 0 : (random < 0.8 ? 1 : 2)) :
-                    (random < 0.7 ? 0 : (random < 0.9 ? 1 : 2));
+                let statusIndex;
+                if (isWeekend) {
+                    // Better service on weekends
+                    statusIndex = random < 0.8 ? 0 : (random < 0.95 ? 1 : 2);
+                } else if (isRushHour) {
+                    // More issues during rush hour
+                    statusIndex = random < 0.3 ? 0 : (random < 0.75 ? 1 : 2);
+                } else {
+                    // Normal service
+                    statusIndex = random < 0.6 ? 0 : (random < 0.85 ? 1 : 2);
+                }
                 
                 return { name: line.name, status: statuses[statusIndex] };
             });
@@ -944,21 +1033,34 @@
             return null;
         }
 
-        // Weather function
+        // Enhanced weather simulation
         async function fetchWeather() {
             const now = new Date();
             const month = now.getMonth();
+            const hour = now.getHours();
+            
+            // Seasonal base temperatures
             const monthlyTemps = [32, 38, 48, 58, 68, 78, 82, 80, 72, 62, 48, 36];
-            const conditions = ['Clear', 'Partly Cloudy', 'Cloudy', 'Light Rain', 'Sunny'];
+            
+            // Time of day variation
+            const timeVariation = Math.sin((hour - 6) * Math.PI / 12) * 8;
+            
+            // Weather conditions with seasonal bias
+            const conditions = month >= 5 && month <= 8 ? 
+                ['Sunny', 'Partly Cloudy', 'Clear', 'Warm', 'Hot'] :
+                ['Cloudy', 'Clear', 'Cold', 'Overcast', 'Chilly'];
+            
+            const baseTemp = monthlyTemps[month];
+            const actualTemp = Math.round(baseTemp + timeVariation + Math.random() * 10 - 5);
             
             weatherData = {
-                temp: `${monthlyTemps[month] + Math.floor(Math.random() * 10) - 5}°F`,
+                temp: `${actualTemp}°F`,
                 description: conditions[Math.floor(Math.random() * conditions.length)],
                 loading: false
             };
         }
 
-        // Left panel cycling with MTA-style slide animation
+        // Enhanced left panel cycling with smoother transitions
         function slideLeftPanel() {
             const headers = ['Weather', 'Time Zones', 'Statistics'];
             const slides = ['weatherSlide', 'timezoneSlide', 'statsSlide'];
@@ -974,8 +1076,13 @@
             nextSlide.classList.remove('next');
             nextSlide.classList.add('current');
             
-            // Update header
-            document.getElementById('leftCyclingHeader').textContent = headers[leftPanelIndex];
+            // Update header with smooth transition
+            const headerEl = document.getElementById('leftCyclingHeader');
+            headerEl.style.opacity = '0.5';
+            setTimeout(() => {
+                headerEl.textContent = headers[leftPanelIndex];
+                headerEl.style.opacity = '1';
+            }, 300);
             
             // Set up the next slide
             setTimeout(() => {
@@ -988,10 +1095,10 @@
                 const afterNextSlide = document.getElementById(slides[afterNextIndex]);
                 afterNextSlide.classList.remove('prev');
                 afterNextSlide.classList.add('next');
-            }, 500);
+            }, 600);
         }
 
-        // Slide animations for announcements and alerts
+        // Enhanced slide animations with easing
         function slideAnnouncement() {
             if (!userSettings.announcements || userSettings.announcements.length === 0) return;
             
@@ -1011,7 +1118,7 @@
                     setTimeout(() => {
                         newItem.classList.remove('slide-in');
                     }, 50);
-                }, 500);
+                }, 600);
             } else {
                 updateAnnouncementsInfo();
             }
@@ -1036,7 +1143,7 @@
                     setTimeout(() => {
                         newItem.classList.remove('slide-in');
                     }, 50);
-                }, 500);
+                }, 600);
             } else {
                 updateAlertsInfo();
             }
@@ -1091,7 +1198,7 @@
             const now = new Date();
             const startOfYear = new Date(now.getFullYear(), 0, 1);
             const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
-            const daysInYear = 365;
+            const daysInYear = 365 + (now.getFullYear() % 4 === 0 ? 1 : 0);
             
             document.getElementById('statsSlide').innerHTML = `
                 <div class="primary-text">Day ${dayOfYear}</div>
@@ -1227,7 +1334,7 @@
             }
         }
 
-        // Celebration effects
+        // Enhanced celebration effects
         function triggerCelebration() {
             const halo = document.createElement('div');
             halo.className = 'celebration-halo';
@@ -1235,23 +1342,23 @@
             
             const colors = ['yellow', 'red', 'blue', 'green', 'orange', 'purple'];
             
-            for (let i = 0; i < 60; i++) {
+            for (let i = 0; i < 80; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = `confetti-piece ${colors[Math.floor(Math.random() * colors.length)]}`;
                 
-                const angle = (Math.PI * 2 * i) / 60;
-                const distance = 300 + Math.random() * 600;
+                const angle = (Math.PI * 2 * i) / 80;
+                const distance = 400 + Math.random() * 800;
                 const x = Math.cos(angle) * distance;
                 const y = Math.sin(angle) * distance;
                 
                 confetti.style.setProperty('--x', `${x}px`);
                 confetti.style.setProperty('--y', `${y}px`);
-                confetti.style.animation = `confettiFall ${2 + Math.random()}s ease-out forwards`;
-                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.animation = `confettiFall ${2.5 + Math.random() * 1.5}s ease-out forwards`;
+                confetti.style.animationDelay = `${Math.random() * 0.8}s`;
                 
                 document.body.appendChild(confetti);
                 
-                setTimeout(() => confetti.remove(), 3000);
+                setTimeout(() => confetti.remove(), 4000);
             }
             
             setTimeout(() => halo.remove(), 3000);
@@ -1343,7 +1450,7 @@
             const statusEl = document.getElementById('statusMessage');
             statusEl.textContent = message;
             statusEl.style.display = 'block';
-            statusEl.style.background = type === 'success' ? '#4ade80' : '#ef4444';
+            statusEl.style.background = type === 'success' ? '#4ade80' : '#EF4444';
             statusEl.style.color = '#000000';
         }
 
@@ -1500,19 +1607,22 @@
             fetchWeather();
             updateAll();
             
-            // Set intervals
+            // Set intervals with enhanced timing
             setInterval(updateScheduleDisplay, 1000);
             setInterval(updateTimeDisplays, 1000);
             setInterval(updateAll, 60000);
             setInterval(() => {
                 subwayData = generateSubwayData();
                 updateSubwayStatus();
-            }, 3600000);
+            }, 300000); // Update subway every 5 minutes
             
-            // MTA-style cycling intervals
-            setInterval(slideLeftPanel, 8000); // Left panel cycles every 8 seconds
-            setInterval(slideAnnouncement, 15000); // Announcements every 15 seconds
-            setInterval(slideAlert, 30000); // Alerts every 30 seconds
+            // Enhanced cycling intervals
+            setInterval(slideLeftPanel, 10000); // Left panel cycles every 10 seconds
+            setInterval(slideAnnouncement, 18000); // Announcements every 18 seconds
+            setInterval(slideAlert, 25000); // Alerts every 25 seconds
+            
+            // Refresh weather every 30 minutes
+            setInterval(fetchWeather, 1800000);
         }
 
         // Start
