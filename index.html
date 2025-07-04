@@ -54,7 +54,6 @@
             font-weight: 700;
             color: #ffffff;
             letter-spacing: 0.5px;
-            text-transform: uppercase;
         }
         
         .current-time-header {
@@ -119,6 +118,38 @@
             letter-spacing: 1px;
         }
         
+        /* Yellow swipe animation for status changes */
+        .schedule-swipe-overlay {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, #FCCC0A 20%, #FCCC0A 80%, transparent 100%);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+        
+        .schedule-swipe-overlay.active {
+            animation: yellowSwipe 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        @keyframes yellowSwipe {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .schedule-content {
+            position: relative;
+            z-index: 5;
+            transition: opacity 0.3s ease;
+        }
+        
+        .schedule-content.changing {
+            opacity: 0.7;
+        }
+        
         /* Side Panels */
         .info-display {
             background: #1a1a1a;
@@ -134,7 +165,7 @@
             background: #000000;
             border-bottom: 2px solid #333333;
             padding: 18px 20px;
-            min-height: 140px;
+            min-height: 160px;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -146,7 +177,7 @@
         }
         
         .info-section.cycling {
-            min-height: 160px;
+            min-height: 180px;
         }
         
         .section-header {
@@ -711,6 +742,8 @@
             .period-header { font-size: 2.2rem; }
             .countdown-time { font-size: 4rem; }
             .before-after-text { font-size: 3.5rem; }
+            .info-section { min-height: 140px; }
+            .info-section.cycling { min-height: 160px; }
         }
         
         @media (max-width: 768px) {
@@ -719,6 +752,7 @@
             .period-header { font-size: 1.9rem; }
             .countdown-time { font-size: 3.2rem; }
             .info-section { padding: 14px 16px; min-height: 120px; }
+            .info-section.cycling { min-height: 140px; }
             .primary-text { font-size: 1.3rem; }
             .subway-status { grid-template-columns: repeat(3, 1fr); }
             .train-indicator { width: 32px; height: 32px; font-size: 0.9rem; }
@@ -764,7 +798,9 @@
         
         <!-- Main Schedule Display -->
         <div class="schedule-display" id="scheduleDisplay">
-            <div id="periodDisplay"></div>
+            <div class="schedule-content">
+                <div id="periodDisplay"></div>
+            </div>
             <div class="system-time" id="currentTime">00:00:00</div>
         </div>
         
@@ -941,6 +977,8 @@
         let lastPeriodEndTime = null;
         let emergencyMode = null;
         let normalScheduleDisplay = null;
+        let currentScheduleState = null;
+        let isAnimatingSchedule = false;
 
         // Utility functions
         function timeToMinutes(timeStr) {
@@ -1277,40 +1315,58 @@
             
             checkPeriodEnd();
             
+            let newContent = '';
+            let newState = '';
+            
             if (!currentPeriod) {
-                display.innerHTML = '<div class="before-after-text">System Ready</div>';
-                return;
-            }
-
-            if (currentPeriod.type === 'before') {
-                display.innerHTML = '<div class="before-after-text">Before School</div>';
-            } 
-            else if (currentPeriod.type === 'after') {
-                display.innerHTML = '<div class="before-after-text">After School</div>';
-            }
-            else if (currentPeriod.type === 'passing') {
+                newContent = '<div class="before-after-text">System Ready</div>';
+                newState = 'system-ready';
+            } else if (currentPeriod.type === 'before') {
+                newContent = '<div class="before-after-text">Before School</div>';
+                newState = 'before-school';
+            } else if (currentPeriod.type === 'after') {
+                newContent = '<div class="before-after-text">After School</div>';
+                newState = 'after-school';
+            } else if (currentPeriod.type === 'passing') {
                 const endMinutes = timeToMinutes(currentPeriod.end);
                 const currentMinutes = now.getHours() * 60 + now.getMinutes();
                 const currentSeconds = now.getSeconds();
                 const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
                 
-                display.innerHTML = `
+                newContent = `
                     <div class="status-label">Passing Period</div>
                     <div class="countdown-time">${formatCountdown(totalSecondsLeft)}</div>
                     <div class="secondary-text">Next: ${currentPeriod.next}</div>
                 `;
-            }
-            else if (currentPeriod.type === 'period') {
+                newState = `passing-${currentPeriod.next}`;
+            } else if (currentPeriod.type === 'period') {
                 const endMinutes = timeToMinutes(currentPeriod.end);
                 const currentMinutes = now.getHours() * 60 + now.getMinutes();
                 const currentSeconds = now.getSeconds();
                 const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
                 
-                display.innerHTML = `
+                newContent = `
                     <div class="period-header">${currentPeriod.name}</div>
                     <div class="countdown-time">${formatCountdown(totalSecondsLeft)}</div>
                     <div class="status-label">Time Remaining</div>
                 `;
+                newState = `period-${currentPeriod.name}`;
+            }
+            
+            // Check if state has changed (excluding countdown updates)
+            if (currentScheduleState && currentScheduleState !== newState) {
+                // State changed - trigger swipe animation
+                triggerScheduleSwipe(newContent);
+                currentScheduleState = newState;
+            } else if (!currentScheduleState) {
+                // First load
+                display.innerHTML = newContent;
+                currentScheduleState = newState;
+            } else {
+                // Same state - just update countdown if it's a period or passing
+                if (currentPeriod && (currentPeriod.type === 'period' || currentPeriod.type === 'passing')) {
+                    display.innerHTML = newContent;
+                }
             }
         }
 
@@ -1362,6 +1418,41 @@
             }
             
             setTimeout(() => halo.remove(), 3000);
+        }
+
+        // Yellow swipe animation for schedule changes
+        function triggerScheduleSwipe(newContent) {
+            if (isAnimatingSchedule) return;
+            
+            isAnimatingSchedule = true;
+            const display = document.getElementById('scheduleDisplay');
+            const content = display.querySelector('.schedule-content') || display;
+            
+            // Create swipe overlay
+            const swipeOverlay = document.createElement('div');
+            swipeOverlay.className = 'schedule-swipe-overlay';
+            display.appendChild(swipeOverlay);
+            
+            // Add changing class for content fade
+            content.classList.add('changing');
+            
+            // Start animation
+            setTimeout(() => {
+                swipeOverlay.classList.add('active');
+            }, 50);
+            
+            // Update content during swipe
+            setTimeout(() => {
+                const periodDisplay = document.getElementById('periodDisplay');
+                periodDisplay.innerHTML = newContent;
+            }, 400);
+            
+            // Clean up after animation
+            setTimeout(() => {
+                content.classList.remove('changing');
+                swipeOverlay.remove();
+                isAnimatingSchedule = false;
+            }, 850);
         }
 
         // Settings and modal functions
@@ -1558,8 +1649,10 @@
             }
             
             display.innerHTML = `
-                <div class="emergency-text ${className}">${text}</div>
-                <div class="emergency-subtext ${className}">${subtext}</div>
+                <div class="schedule-content">
+                    <div class="emergency-text ${className}">${text}</div>
+                    <div class="emergency-subtext ${className}">${subtext}</div>
+                </div>
                 <div class="emergency-info-bar">${infoText}</div>
             `;
             closeSettings();
@@ -1569,10 +1662,17 @@
             document.body.classList.remove('emergency-active', 'emergency-lockdown', 'emergency-shelter', 'emergency-fire', 'emergency-special');
             
             if (normalScheduleDisplay) {
-                document.getElementById('scheduleDisplay').innerHTML = normalScheduleDisplay;
+                document.getElementById('scheduleDisplay').innerHTML = `
+                    <div class="schedule-content">
+                        <div id="periodDisplay">${normalScheduleDisplay}</div>
+                    </div>
+                    <div class="system-time" id="currentTime">00:00:00</div>
+                `;
                 normalScheduleDisplay = null;
             }
             
+            // Reset the schedule state to force a refresh
+            currentScheduleState = null;
             emergencyMode = null;
         }
 
