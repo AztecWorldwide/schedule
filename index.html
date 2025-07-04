@@ -3,331 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Comprehensive school dashboard with schedule tracking, weather, and useful daily information.">
-    <meta name="keywords" content="school schedule, dashboard, period tracker, weather, daily planner">
+    <meta name="description" content="School Information Display - MTA Style Interface">
     <meta name="author" content="School Dashboard">
-    <title>School Dashboard</title>
+    <title>School Information Display</title>
     
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
         * {
             box-sizing: border-box;
         }
         
         body {
             margin: 0;
-            padding: 20px;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background: #1a1a1a;
             min-height: 100vh;
-            color: white;
-            transition: background 1s ease;
+            color: #ffffff;
             overflow-x: hidden;
         }
         
-        .dashboard {
+        .main-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 20px;
-            height: calc(100vh - 40px);
-            max-width: 1400px;
+            grid-template-columns: 2fr 3fr 2fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 0;
+            height: 100vh;
+            max-width: 1600px;
             margin: 0 auto;
         }
         
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .card h3 {
-            margin: 0 0 15px 0;
-            font-size: 1.2em;
-            opacity: 0.8;
-            font-weight: 300;
-        }
-        
-        .schedule-card {
-            grid-column: 2;
-            grid-row: 2;
-        }
-        
-        .status {
-            font-size: clamp(1.5em, 3vw, 2em);
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            line-height: 1.2;
-        }
-        
-        .countdown {
-            font-size: clamp(2em, 4vw, 2.5em);
-            font-weight: bold;
-            color: #ffeb3b;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin: 10px 0;
-            line-height: 1.1;
-        }
-        
-        .period-info {
-            font-size: clamp(1em, 2vw, 1.2em);
-            margin: 5px 0;
-            opacity: 0.9;
-        }
-        
-        .next-info {
-            font-size: clamp(0.9em, 2vw, 1.1em);
-            margin-top: 10px;
-            color: #81c784;
-            font-weight: bold;
-        }
-        
-        .before-after {
-            font-size: clamp(2.5em, 5vw, 3em);
-            font-weight: bold;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
-            line-height: 1;
-        }
-        
-        .weather-info {
-            font-size: clamp(1em, 2vw, 1.2em);
-            margin: 5px 0;
-            color: #b3e5fc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .weather-temp {
-            font-weight: bold;
-            color: #ffeb3b;
-        }
-        
-        .settings-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            color: white;
-            font-size: 1.2em;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            z-index: 100;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .settings-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
-        }
-        
-        .card-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .large-text {
-            font-size: clamp(1.5em, 3vw, 2em);
-            font-weight: bold;
-            margin: 5px 0;
-        }
-        
-        .medium-text {
-            font-size: clamp(1.1em, 2.5vw, 1.4em);
-            margin: 3px 0;
-        }
-        
-        .small-text {
-            font-size: clamp(0.8em, 1.8vw, 1em);
-            opacity: 0.8;
-            margin: 2px 0;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4caf50, #81c784);
-            border-radius: 4px;
-            transition: width 1s ease;
-        }
-        
-        .news-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 8px;
-            margin: 3px 0;
-            font-size: 0.85em;
-            line-height: 1.3;
-            width: 100%;
-        }
-        
-        .subway-line {
+        /* Header */
+        .header-bar {
+            grid-column: 1 / -1;
+            background: #000000;
+            padding: 12px 20px;
+            border-bottom: 3px solid #fccc0a;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 4px 0;
-            padding: 4px 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            font-size: 0.9em;
         }
         
-        .subway-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(clamp(30px, 4vw, 50px), 1fr));
-            gap: clamp(3px, 0.5vw, 8px);
-            width: 100%;
-            max-width: 100%;
-            justify-items: center;
+        .station-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        
+        .current-time-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fccc0a;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Main Schedule Display */
+        .schedule-display {
+            grid-column: 2;
+            grid-row: 2;
+            background: #000000;
+            border-left: 2px solid #333333;
+            border-right: 2px solid #333333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            padding: 5px;
+            text-align: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
         }
         
-        .subway-line-box {
+        .period-header {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .countdown-time {
+            font-size: 5rem;
+            font-weight: 900;
+            color: #fccc0a;
+            margin: 30px 0;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+        
+        .status-label {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .before-after-text {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #4ade80;
+            text-transform: uppercase;
+        }
+        
+        /* Side Panels */
+        .info-display {
+            background: #2d2d2d;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-section {
+            background: #1a1a1a;
+            margin-bottom: 2px;
+            padding: 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .info-section.cycling {
+            min-height: 140px;
+        }
+        
+        .section-header {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fccc0a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 6px;
+        }
+        
+        .info-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .content-slide.current {
+            transform: translateX(0);
+        }
+        
+        .content-slide.next {
+            transform: translateX(100%);
+        }
+        
+        .content-slide.prev {
+            transform: translateX(-100%);
+        }
+        
+        .primary-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        
+        .secondary-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #cccccc;
+            margin-bottom: 2px;
+        }
+        
+        .accent-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fccc0a;
+        }
+        
+        /* Subway Status */
+        .subway-status {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .train-indicator {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: clamp(30px, 4vw, 50px);
-            height: clamp(30px, 4vw, 50px);
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            font-weight: bold;
-            font-size: clamp(0.7em, 1.5vw, 1.1em);
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            flex-shrink: 0;
-            aspect-ratio: 1;
+            font-weight: 900;
+            font-size: 0.9rem;
+            color: #ffffff;
+            border: 2px solid transparent;
         }
         
-        .subway-line-box:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
+        /* MTA Train Line Colors */
+        .line-4, .line-5, .line-6 { background: #00933c; }
+        .line-N, .line-Q, .line-R, .line-W { background: #fccc0a; color: #000000; }
+        .line-L { background: #a7a9ac; color: #000000; }
+        .line-A, .line-C, .line-E { background: #0039a6; }
+        .line-B, .line-D, .line-F, .line-M { background: #ff6319; }
+        .line-1, .line-2, .line-3 { background: #ee352e; }
+        .line-7 { background: #b933ad; }
+        .line-J, .line-Z { background: #996633; }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .subway-grid {
-                grid-template-columns: repeat(auto-fit, minmax(25px, 1fr));
-                gap: 2px;
-                max-width: 100%;
-            }
-            
-            .subway-line-box {
-                width: clamp(25px, 6vw, 40px);
-                height: clamp(25px, 6vw, 40px);
-                font-size: clamp(0.6em, 2vw, 0.9em);
-            }
-        }
+        /* Service Status */
+        .status-good { border-color: #4ade80; }
+        .status-delays { border-color: #fccc0a; }
+        .status-service-change { border-color: #ef4444; }
         
-        @media (max-width: 480px) {
-            .subway-grid {
-                grid-template-columns: repeat(auto-fit, minmax(22px, 1fr));
-                gap: 1px;
-            }
-            
-            .subway-line-box {
-                width: clamp(22px, 7vw, 35px);
-                height: clamp(22px, 7vw, 35px);
-                font-size: clamp(0.5em, 2.5vw, 0.8em);
-            }
-        }
-        
-        .subway-line-box.status-good {
-            background: #4caf50;
-            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
-        }
-        
-        .subway-line-box.status-delays {
-            background: #ff9800;
-            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
-        }
-        
-        .subway-line-box.status-service-change {
-            background: #f44336;
-            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
-        }
-        
-        .subway-line-name {
-            font-weight: bold;
-            min-width: 30px;
-        }
-        
-        .subway-status {
-            font-size: 0.8em;
-            padding: 2px 6px;
+        /* Announcements and Alerts */
+        .announcement-item, .alert-item {
+            padding: 10px;
+            margin: 4px 0;
             border-radius: 4px;
-            font-weight: bold;
-        }
-        
-        .status-good {
-            background: #4caf50;
-            color: white;
-        }
-        
-        .status-delays {
-            background: #ff9800;
-            color: white;
-        }
-        
-        .status-service-change {
-            background: #f44336;
-            color: white;
-        }
-        
-        .announcement-text {
-            font-size: clamp(1.1em, 2.5vw, 1.4em);
-            font-weight: bold;
-            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
             line-height: 1.3;
-            margin: 10px 0;
-            animation: fadeIn 0.5s ease-in-out;
+            transform: translateX(0);
+            transition: transform 0.5s ease-in-out;
         }
         
-        .alert-text {
-            font-size: clamp(1.2em, 2.8vw, 1.5em);
-            font-weight: bold;
+        .announcement-item {
+            background: #333333;
+            color: #ffffff;
+        }
+        
+        .alert-item {
+            background: #fccc0a;
+            color: #000000;
+            font-weight: 600;
+        }
+        
+        .announcement-item.slide-out {
+            transform: translateX(-100%);
+        }
+        
+        .announcement-item.slide-in {
+            transform: translateX(100%);
+        }
+        
+        .alert-item.slide-out {
+            transform: translateX(-100%);
+        }
+        
+        .alert-item.slide-in {
+            transform: translateX(100%);
+        }
+        
+        /* Emergency States */
+        .emergency-active .info-display {
+            display: none;
+        }
+        
+        .emergency-active .header-bar {
+            background: #fccc0a;
+            color: #000000;
+            border-bottom-color: #000000;
+        }
+        
+        .emergency-active .station-name {
+            color: #000000;
+            font-weight: 900;
+        }
+        
+        .emergency-active .current-time-header {
+            color: #000000;
+        }
+        
+        .emergency-active .schedule-display {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 500;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .emergency-lockdown .schedule-display {
+            background: #fccc0a;
+        }
+        
+        .emergency-lockdown .schedule-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: #000000;
+        }
+        
+        .emergency-shelter .schedule-display {
+            background: #0ea5e9;
+            animation: emergencyPulse 2s infinite;
+        }
+        
+        .emergency-fire .schedule-display {
+            background: #ef4444;
+            animation: emergencyFlash 1s infinite;
+        }
+        
+        .emergency-special .schedule-display {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        }
+        
+        @keyframes emergencyPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes emergencyFlash {
+            0%, 50% { background: #ef4444; }
+            51%, 100% { background: #dc2626; }
+        }
+        
+        .emergency-text {
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: 900;
             text-align: center;
-            line-height: 1.3;
-            margin: 10px 0;
-            color: white;
-            animation: fadeIn 0.5s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 20px;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .emergency-subtext {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+        
+        .lockdown-text { 
+            color: #000000; 
+        }
+        
+        .shelter-text { 
+            color: #ffffff; 
+        }
+        
+        .fire-text { 
+            color: #ffffff; 
+            animation: fireShake 0.5s infinite;
+        }
+        
+        .special-text { 
+            color: #ffffff; 
+        }
+        
+        @keyframes fireShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        
+        /* Emergency Info Bar */
+        .emergency-info-bar {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 16px 32px;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .emergency-lockdown .emergency-info-bar {
+            background: rgba(0, 0, 0, 0.9);
+            color: #fccc0a;
+        }
+        
+        .emergency-shelter .emergency-info-bar {
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+        }
+        
+        .emergency-fire .emergency-info-bar {
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+        }
+        
+        .emergency-special .emergency-info-bar {
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+        }
+        
+        /* Bottom Status Bar */
+        .status-bar {
+            grid-column: 1 / -1;
+            background: #000000;
+            border-top: 2px solid #333333;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .system-time {
+            color: #cccccc;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .system-status {
+            color: #4ade80;
+            font-weight: 600;
+        }
+        
+        /* Settings Button */
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fccc0a;
+            color: #000000;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            z-index: 100;
+            text-transform: uppercase;
+        }
+        
+        .settings-btn:hover {
+            background: #ffffff;
+        }
+        
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: #1a1a1a;
+            border: 2px solid #fccc0a;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: #ffffff;
+        }
+        
+        .modal-header {
+            background: #fccc0a;
+            color: #000000;
+            padding: 16px 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .form-section {
+            margin-bottom: 24px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 16px;
+        }
+        
+        .form-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fccc0a;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            background: #000000;
+            border: 1px solid #333333;
+            color: #ffffff;
+            padding: 8px 12px;
+            font-family: inherit;
+            border-radius: 2px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #fccc0a;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #333333;
+            background: #000000;
+            color: #ffffff;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            border-radius: 2px;
+        }
+        
+        .btn-primary {
+            background: #fccc0a;
+            color: #000000;
+            border-color: #fccc0a;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: #ffffff;
+            border-color: #ef4444;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
         }
         
         /* Celebration Effects */
@@ -338,7 +576,7 @@
             width: 200px;
             height: 200px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 235, 59, 0.9) 0%, rgba(255, 235, 59, 0.6) 20%, rgba(255, 235, 59, 0.3) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(252, 204, 10, 0.9) 0%, rgba(252, 204, 10, 0.6) 30%, transparent 70%);
             transform: translate(-50%, -50%);
             animation: haloExpand 3s ease-out forwards;
             pointer-events: none;
@@ -346,23 +584,14 @@
         }
         
         @keyframes haloExpand {
-            0% {
-                width: 200px;
-                height: 200px;
-                opacity: 1;
-            }
-            100% {
-                width: 2000px;
-                height: 2000px;
-                opacity: 0;
-            }
+            0% { width: 200px; height: 200px; opacity: 1; }
+            100% { width: 2000px; height: 2000px; opacity: 0; }
         }
         
         .confetti-piece {
             position: fixed;
             width: 12px;
             height: 12px;
-            background: #ffeb3b;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -370,783 +599,206 @@
             z-index: 1001;
         }
         
-        .confetti-piece.red { background: #f44336; }
-        .confetti-piece.blue { background: #2196f3; }
-        .confetti-piece.green { background: #4caf50; }
-        .confetti-piece.orange { background: #ff9800; }
-        .confetti-piece.purple { background: #9c27b0; }
-        .confetti-piece.pink { background: #e91e63; }
-        .confetti-piece.cyan { background: #00bcd4; }
-        .confetti-piece.lime { background: #cddc39; }
-        .confetti-piece.indigo { background: #3f51b5; }
+        .confetti-piece.yellow { background: #fccc0a; }
+        .confetti-piece.red { background: #ef4444; }
+        .confetti-piece.blue { background: #0ea5e9; }
+        .confetti-piece.green { background: #4ade80; }
+        .confetti-piece.orange { background: #ff6319; }
+        .confetti-piece.purple { background: #8b5cf6; }
         
         @keyframes confettiFall {
-            0% {
-                transform: translate(-50%, -50%) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--x), var(--y)) rotate(720deg);
-                opacity: 0;
-            }
+            0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) rotate(720deg); opacity: 0; }
         }
         
-        .code-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-        
-        .code-modal {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 400px;
-            width: 100%;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-        }
-        
-        .code-header {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #81c784;
-        }
-        
-        .code-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            color: white;
-            font-size: 1.2em;
-            text-align: center;
-            margin-bottom: 20px;
-            letter-spacing: 0.2em;
-        }
-        
-        .code-input:focus {
-            outline: none;
-            border-color: #81c784;
-            box-shadow: 0 0 10px rgba(129, 199, 132, 0.3);
-        }
-        
-        .code-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .code-error {
-            color: #ff6b6b;
-            margin-top: 10px;
-            font-size: 0.9em;
-            display: none;
-        }
-        
-        .settings-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .control-btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .party-btn {
-            background: linear-gradient(45deg, #ffeb3b, #ffc107);
-            color: #333;
-        }
-        
-        .party-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(255, 235, 59, 0.4);
-        }
-        
-        .emergency-btn-settings {
-            background: linear-gradient(45deg, #ff5722, #d32f2f);
-            color: white;
-        }
-        
-        .emergency-btn-settings:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
-        }
-        
-        .emergency-options-settings {
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            min-width: 200px;
-            margin-top: 10px;
-        }
-        
-        .emergency-options-settings.show {
-            display: flex;
-        }
-        
-        .emergency-option-settings {
-            padding: 10px 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            color: white;
-            text-align: center;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-        }
-        
-        .emergency-option-settings:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .emergency-option-settings.lockdown {
-            background: rgba(255, 193, 7, 0.3);
-            border-color: #ffc107;
-        }
-        
-        .emergency-option-settings.shelter {
-            background: rgba(33, 150, 243, 0.3);
-            border-color: #2196f3;
-        }
-        
-        .emergency-option-settings.fire {
-            background: rgba(244, 67, 54, 0.3);
-            border-color: #f44336;
-        }
-        
-        .emergency-exit-settings {
-            background: rgba(76, 175, 80, 0.3);
-            border-color: #4caf50;
-        }
-        
-        /* Emergency States */
-        .emergency-active .card:not(.schedule-card) {
-            transition: all 0.5s ease-in-out;
-        }
-        
-        .emergency-active .card:not(.schedule-card) .card-content {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .emergency-active .schedule-card {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 500;
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.5s ease-in-out;
-        }
-        
-        .emergency-lockdown .card:not(.schedule-card) {
-            background: #ffeb3b !important;
-            box-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
-        }
-        
-        .emergency-shelter .card:not(.schedule-card) {
-            animation: shelterFlash 1s infinite;
-        }
-        
-        @keyframes shelterFlash {
-            0%, 50% { background: #ffeb3b !important; box-shadow: 0 0 20px rgba(255, 235, 59, 0.8); }
-            51%, 100% { background: #2196f3 !important; box-shadow: 0 0 20px rgba(33, 150, 243, 0.8); }
-        }
-        
-        .emergency-fire .card:not(.schedule-card) {
-            background: #f44336 !important;
-            box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
-        }
-        
-        .emergency-special .card:not(.schedule-card) {
-            background: linear-gradient(135deg, #e91e63, #9c27b0) !important;
-            box-shadow: 0 0 20px rgba(233, 30, 99, 0.8);
-        }
-        
-        .emergency-lockdown .schedule-card {
-            background: rgba(255, 235, 59, 0.95) !important;
-            box-shadow: 0 0 50px rgba(255, 235, 59, 0.8);
-        }
-        
-        .emergency-shelter .schedule-card {
-            animation: shelterCenterFlash 1s infinite;
-        }
-        
-        @keyframes shelterCenterFlash {
-            0%, 50% { 
-                background: rgba(255, 235, 59, 0.95) !important; 
-                box-shadow: 0 0 50px rgba(255, 235, 59, 0.8);
-            }
-            51%, 100% { 
-                background: rgba(33, 150, 243, 0.95) !important; 
-                box-shadow: 0 0 50px rgba(33, 150, 243, 0.8);
-            }
-        }
-        
-        .emergency-fire .schedule-card {
-            background: rgba(244, 67, 54, 0.95) !important;
-            box-shadow: 0 0 50px rgba(244, 67, 54, 0.8);
-        }
-        
-        .emergency-special .schedule-card {
-            background: rgba(255, 235, 59, 0.95) !important;
-            box-shadow: 0 0 50px rgba(255, 235, 59, 0.8);
-        }
-        
-        .emergency-text {
-            font-size: clamp(4em, 12vw, 8em);
-            font-weight: bold;
-            text-align: center;
-            line-height: 1.2;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
-        }
-        
-        .lockdown-text {
-            animation: lockdownFlash 1s infinite;
-        }
-        
-        @keyframes lockdownFlash {
-            0%, 50% { color: #f44336; }
-            51%, 100% { color: #ffeb3b; }
-        }
-        
-        .shelter-text {
-            animation: shelterTextFlash 1s infinite;
-        }
-        
-        @keyframes shelterTextFlash {
-            0%, 50% { color: #ffeb3b; }
-            51%, 100% { color: #2196f3; }
-        }
-        
-        .fire-text {
-            color: white;
-            animation: fireShake 0.5s infinite, fireScale 1s infinite, fireColorFlash 0.8s infinite;
-        }
-        
-        @keyframes fireShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        
-        @keyframes fireScale {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        
-        @keyframes fireColorFlash {
-            0%, 50% { color: white; }
-            51%, 100% { color: #ffeb3b; }
-        }
-        
-        .special-text {
-            color: #2196f3;
-            animation: specialPulse 2s infinite;
-        }
-        
-        @keyframes specialPulse {
-            0%, 100% { 
-                transform: scale(1);
-                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
-            }
-            50% { 
-                transform: scale(1.05);
-                text-shadow: 3px 3px 15px rgba(33, 150, 243, 0.6);
-            }
-        }
-        
-        .emergency-option-settings.special {
-            background: rgba(255, 235, 59, 0.3);
-            border-color: #ffeb3b;
-        }
-        
-        .holiday-badge {
-            background: linear-gradient(45deg, #ff6b6b, #ffa726);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-        
-        .timezone-item {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin: 3px 0;
-            font-size: 0.9em;
-        }
-        
-        .settings-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-        
-        .settings-modal {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .settings-header {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .settings-section {
-            margin-bottom: 25px;
-        }
-        
-        .settings-section h3 {
-            font-size: 1.3em;
-            margin-bottom: 10px;
-            color: #81c784;
-        }
-        
-        .period-input {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            gap: 10px;
-            flex-wrap: nowrap;
-        }
-        
-        .period-input label {
-            width: 100px;
-            font-size: 0.9em;
-            flex-shrink: 0;
-        }
-        
-        .period-input input {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            padding: 5px 10px;
-            color: white;
-            width: 70px;
-            flex-shrink: 0;
-        }
-        
-        .city-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            padding: 10px;
-            color: white;
-            font-size: 1em;
-        }
-        
-        .announcements-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            padding: 10px;
-            color: white;
-            font-size: 1em;
-            min-height: 100px;
-            resize: vertical;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
-        
-        .announcements-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .preset-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .preset-btn {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid #2196f3;
-            color: #bbdefb;
-            transition: all 0.3s ease;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        
-        .preset-btn:hover {
-            background: rgba(33, 150, 243, 0.4);
-        }
-        
-        .settings-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-save {
-            background: #4caf50;
-            color: white;
-        }
-        
-        .btn-cancel {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .error-message {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid #f44336;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 10px 0;
-            color: #ffcdd2;
-            font-size: 0.9em;
-            display: none;
-        }
-        
-        .success-message {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid #4caf50;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 10px 0;
-            color: #c8e6c9;
-            font-size: 0.9em;
-            display: none;
-        }
-        
-        /* Checkbox styling */
-        input[type="checkbox"] {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        
-        input[type="checkbox"]:checked {
-            background: #4caf50;
-            border-color: #4caf50;
-        }
-        
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .dashboard {
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
                 grid-template-columns: 1fr;
-                grid-template-rows: repeat(9, minmax(120px, 1fr));
-                gap: 15px;
-                height: auto;
+                grid-template-rows: auto auto 1fr auto;
             }
             
-            .schedule-card {
+            .schedule-display {
                 grid-column: 1;
-                grid-row: 5;
+                grid-row: 3;
+                border: none;
+                border-top: 2px solid #333333;
+                border-bottom: 2px solid #333333;
             }
             
-            .card {
-                padding: 15px;
+            .info-display:first-of-type {
+                grid-row: 2;
             }
             
-            .settings-btn {
-                position: fixed;
-                top: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-                font-size: 1.1em;
-            }
-            
-            .code-modal {
-                padding: 30px;
-            }
-            
-            .code-header {
-                font-size: 1.3em;
-            }
-            
-            .code-input {
-                padding: 12px;
-                font-size: 1.1em;
-            }
-            
-            .settings-controls {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .control-btn {
-                padding: 10px 15px;
-                font-size: 0.9em;
-            }
-            
-            .emergency-text {
-                font-size: clamp(3em, 15vw, 6em);
-            }
+            .period-header { font-size: 2rem; }
+            .countdown-time { font-size: 3.5rem; }
+            .before-after-text { font-size: 3rem; }
         }
         
-        @media (max-width: 480px) {
-            .dashboard {
-                gap: 10px;
-            }
-            
-            .card {
-                padding: 12px;
-            }
-            
-            .code-modal {
-                padding: 20px;
-            }
-            
-            .code-header {
-                font-size: 1.2em;
-            }
-            
-            .code-input {
-                padding: 10px;
-                font-size: 1em;
-            }
-            
-            .control-btn {
-                padding: 8px 12px;
-                font-size: 0.8em;
-            }
-            
-            .emergency-text {
-                font-size: clamp(2.5em, 20vw, 5em);
-            }
+        @media (max-width: 768px) {
+            .station-name { font-size: 1.4rem; }
+            .current-time-header { font-size: 1rem; }
+            .period-header { font-size: 1.8rem; }
+            .countdown-time { font-size: 3rem; }
+            .info-section { padding: 12px; min-height: 100px; }
+            .primary-text { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
-    <button class="settings-btn" onclick="promptForCode()" aria-label="Open Settings">⚙️</button>
+    <button class="settings-btn" onclick="promptForCode()">SET</button>
     
-    <div class="dashboard">
-        <!-- Row 1 -->
-        <div class="card">
-            <div class="card-content" id="dateCard">
-                <h3>Today</h3>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-bar">
+            <div class="station-name">School Information Display</div>
+            <div class="current-time-header" id="headerTime">00:00</div>
+        </div>
+        
+        <!-- Left Info Panel -->
+        <div class="info-display">
+            <!-- Always visible: Today -->
+            <div class="info-section">
+                <div class="section-header">Today</div>
+                <div class="info-content" id="dateInfo">
+                    <div class="primary-text">Loading...</div>
+                </div>
+            </div>
+            
+            <!-- Cycling content: Weather, Time Zones, Statistics -->
+            <div class="info-section cycling">
+                <div class="section-header" id="leftCyclingHeader">Weather</div>
+                <div class="info-content">
+                    <div class="content-slide current" id="weatherSlide">
+                        <div class="primary-text">Loading...</div>
+                    </div>
+                    <div class="content-slide next" id="timezoneSlide">
+                        <div class="secondary-text">Loading...</div>
+                    </div>
+                    <div class="content-slide next" id="statsSlide">
+                        <div class="primary-text">Loading...</div>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="card">
-            <div class="card-content" id="weatherCard">
-                <h3>Weather</h3>
+        <!-- Main Schedule Display -->
+        <div class="schedule-display" id="scheduleDisplay">
+            <div id="periodDisplay"></div>
+            <div class="system-time" id="currentTime">00:00:00</div>
+        </div>
+        
+        <!-- Right Info Panel -->
+        <div class="info-display">
+            <!-- Always visible: Subway Status -->
+            <div class="info-section">
+                <div class="section-header">NYC Subway Status</div>
+                <div class="info-content">
+                    <div class="subway-status" id="subwayStatus"></div>
+                </div>
+            </div>
+            
+            <!-- Always visible: System Alerts (with slide animation) -->
+            <div class="info-section">
+                <div class="section-header">System Alerts</div>
+                <div class="info-content" id="alertsInfo">
+                    <div class="secondary-text">No active alerts</div>
+                </div>
+            </div>
+            
+            <!-- Always visible: Announcements (with slide animation) -->
+            <div class="info-section">
+                <div class="section-header">Announcements</div>
+                <div class="info-content" id="announcementsInfo">
+                    <div class="secondary-text">No announcements</div>
+                </div>
+            </div>
+            
+            <!-- Static: Administration -->
+            <div class="info-section">
+                <div class="section-header">Administration</div>
+                <div class="info-content" id="adminInfo">
+                    <div class="primary-text">Loading...</div>
+                </div>
             </div>
         </div>
         
-        <div class="card">
-            <div class="card-content" id="alertsCard">
-                <h3>Alerts</h3>
-            </div>
+        <!-- Bottom Status Bar -->
+        <div class="status-bar">
+            <div class="system-time" id="bottomTime">System Time: 00:00:00</div>
+            <div class="system-status">● System Operational</div>
         </div>
-        
-        <!-- Row 2 -->
-        <div class="card">
-            <div class="card-content" id="timezoneCard">
-                <h3>Time Zones</h3>
-            </div>
-        </div>
-        
-        <div class="card schedule-card">
-            <div class="card-content" id="scheduleCard">
-                <div id="display"></div>
-                <div class="small-text" id="currentTime"></div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-content" id="announcementsCard">
-                <h3>Announcements</h3>
-            </div>
-        </div>
-        
-        <!-- Row 3 -->
-        <div class="card">
-            <div class="card-content" id="subwayCard">
-                <h3>NYC Subway</h3>
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-content" id="statsCard">
-                <h3>Quick Stats</h3>
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-content" id="newsCard">
-                <h3>Administration</h3>
+    </div>
+
+    <!-- Code Entry Modal -->
+    <div class="modal-overlay" id="codeModal">
+        <div class="modal-content">
+            <div class="modal-header">Access Required</div>
+            <div class="modal-body">
+                <input type="password" class="form-input" id="codeInput" placeholder="Enter 4-digit code" maxlength="4" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                <div class="button-group" style="margin-top: 16px;">
+                    <button class="btn btn-primary" onclick="checkCode()">Enter</button>
+                    <button class="btn" onclick="closeCodePrompt()">Cancel</button>
+                </div>
+                <div id="codeError" style="color: #ef4444; margin-top: 8px; display: none;">Incorrect code</div>
             </div>
         </div>
     </div>
 
-    <div class="code-overlay" id="codeOverlay">
-        <div class="code-modal">
-            <div class="code-header">Enter Settings Code</div>
-            <input type="password" class="code-input" id="codeInput" placeholder="Enter 4-digit code" maxlength="4">
-            <div class="code-buttons">
-                <button class="btn btn-save" onclick="checkCode()">Enter</button>
-                <button class="btn btn-cancel" onclick="closeCodePrompt()">Cancel</button>
-            </div>
-            <div class="code-error" id="codeError">Incorrect code. Please try again.</div>
-        </div>
-    </div>
-
-    <div class="settings-overlay" id="settingsOverlay" role="dialog" aria-hidden="true">
-        <div class="settings-modal">
-            <div class="settings-header">Settings</div>
-            
-            <div class="settings-controls">
-                <button class="control-btn party-btn" onclick="triggerCelebration()">
-                    🎉 Party Mode
-                </button>
-                <button class="control-btn emergency-btn-settings" onclick="toggleEmergencyOptionsSettings()">
-                    🚨 Emergency Mode
-                </button>
-            </div>
-            
-            <div class="emergency-options-settings" id="emergencyOptionsSettings">
-                <div class="emergency-option-settings lockdown" onclick="activateEmergency('lockdown')">🔒 Lockdown</div>
-                <div class="emergency-option-settings shelter" onclick="activateEmergency('shelter')">🏠 Shelter-In</div>
-                <div class="emergency-option-settings fire" onclick="activateEmergency('fire')">🔥 Fire</div>
-                <div class="emergency-option-settings special" onclick="activateEmergency('special')">⭐ Special Event</div>
-                <div class="emergency-option-settings emergency-exit-settings" onclick="deactivateEmergency()">✅ Exit Emergency</div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Special Event Text</h3>
-                <input type="text" class="city-input" id="specialEventInput" 
-                       placeholder="Enter special event text (e.g., ASSEMBLY, GRADUATION, FIELD DAY)" 
-                       aria-label="Special event text">
-                <div class="small-text" style="opacity: 0.7; margin-top: 5px;">
-                    Customize the text shown during special events. Background will be yellow, text will be blue.
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">System Configuration</div>
+            <div class="modal-body">
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="triggerCelebration()">Celebration Mode</button>
+                    <button class="btn btn-danger" onclick="toggleEmergencyOptions()">Emergency Systems</button>
                 </div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Weather Location</h3>
-                <input type="text" class="city-input" id="cityInput" 
-                       placeholder="Enter location (e.g., New York NY, 10001, London)" 
-                       value="New York, NY" aria-label="Weather location">
-                <div class="error-message" id="weatherError" role="alert"></div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Announcements</h3>
-                <textarea class="announcements-input" id="announcementsInput" 
-                          placeholder="Enter announcements, one per line:&#10;&#10;Welcome to school!&#10;Remember to check your schedule&#10;Have a great day!" 
-                          aria-label="Announcements"></textarea>
-                <div class="small-text" style="opacity: 0.7; margin-top: 5px;">
-                    Enter one announcement per line. These will cycle through the Announcements widget every 15 seconds.
+                
+                <div id="emergencyOptions" style="display: none; margin: 16px 0;">
+                    <div class="button-group">
+                        <button class="btn" onclick="activateEmergency('lockdown')" style="background: #fccc0a; color: #000;">Lockdown</button>
+                        <button class="btn" onclick="activateEmergency('shelter')" style="background: #0ea5e9; color: #fff;">Shelter</button>
+                        <button class="btn" onclick="activateEmergency('fire')" style="background: #ef4444; color: #fff;">Fire</button>
+                        <button class="btn" onclick="activateEmergency('special')" style="background: #8b5cf6; color: #fff;">Special Event</button>
+                        <button class="btn" onclick="deactivateEmergency()" style="background: #4ade80; color: #000;">Exit Emergency</button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Alerts</h3>
-                <textarea class="announcements-input" id="alertsInput" 
-                          placeholder="Enter alerts, one per line:&#10;&#10;Check your locker before leaving&#10;Fire drill scheduled for this week&#10;New lunch menu available" 
-                          aria-label="Alerts"></textarea>
-                <div class="small-text" style="opacity: 0.7; margin-top: 5px;">
-                    Enter one alert per line. These will cycle through the Alerts widget every 30 seconds.
+                
+                <div class="form-section">
+                    <h3>Weather Location</h3>
+                    <input type="text" class="form-input" id="cityInput" placeholder="Enter city">
                 </div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Card Appearance</h3>
-                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <input type="checkbox" id="dynamicCardsToggle" style="transform: scale(1.2);">
-                    <span>Dynamic card colors (shuffle every 30 seconds)</span>
-                </label>
-                <div class="small-text" style="opacity: 0.7; margin-left: 32px;">
-                    When disabled, cards will remain translucent
+                
+                <div class="form-section">
+                    <h3>Announcements</h3>
+                    <textarea class="form-input" id="announcementsInput" rows="3" placeholder="One per line"></textarea>
                 </div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Schedule Presets</h3>
-                <div class="preset-buttons">
-                    <button class="preset-btn" onclick="applyPreset('normal')">Normal</button>
-                    <button class="preset-btn" onclick="applyPreset('homeroom')">Homeroom</button>
-                    <button class="preset-btn" onclick="applyPreset('extendedHomeroom')">Extended Homeroom</button>
-                    <button class="preset-btn" onclick="applyPreset('meeting')">Meeting</button>
+                
+                <div class="form-section">
+                    <h3>System Alerts</h3>
+                    <textarea class="form-input" id="alertsInput" rows="3" placeholder="One per line"></textarea>
                 </div>
-            </div>
-            
-            <div class="settings-section">
-                <h3>Custom Period Schedule</h3>
-                <div id="scheduleInputs"></div>
-                <div class="error-message" id="scheduleError" role="alert"></div>
-                <div class="success-message" id="successMessage" role="status"></div>
-            </div>
-            
-            <div class="settings-buttons">
-                <button class="btn btn-save" onclick="saveSettings()">Save</button>
-                <button class="btn btn-cancel" onclick="closeSettings()">Cancel</button>
-                <button class="btn btn-cancel" onclick="exportSettings()" style="background: #2196f3;">Export</button>
-                <button class="btn btn-cancel" onclick="importSettings()" style="background: #ff9800;">Import</button>
-                <button class="btn btn-cancel" onclick="resetSettings()" style="background: #f44336;">Reset All</button>
+                
+                <div class="form-section">
+                    <h3>Special Event Text</h3>
+                    <input type="text" class="form-input" id="specialEventInput" placeholder="Special event text">
+                </div>
+                
+                <div class="form-section">
+                    <h3>Schedule Configuration</h3>
+                    <div id="scheduleInputs"></div>
+                </div>
+                
+                <div id="statusMessage" style="padding: 8px; margin: 8px 0; display: none;"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Configuration</button>
+                    <button class="btn" onclick="closeSettings()">Cancel</button>
+                    <button class="btn" onclick="exportSettings()">Export</button>
+                    <button class="btn" onclick="importSettings()">Import</button>
+                    <button class="btn btn-danger" onclick="resetSettings()">Reset</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1154,26 +806,25 @@
     <script>
         'use strict';
         
-        const APP_VERSION = '3.1.0';
+        const APP_VERSION = '5.1.0';
         const STORAGE_KEY = 'schoolDashboardSettings';
         
-        // Default settings and presets
+        // Default settings
         const DEFAULT_SETTINGS = {
             city: "New York, NY",
             announcements: [
-                "Welcome to school!",
-                "Remember to check your schedule",
-                "Have a great day!",
-                "Stay hydrated and focused"
+                "Welcome to school",
+                "Check your schedule", 
+                "Have a great day",
+                "Stay focused"
             ],
             alerts: [
-                "Check your locker before leaving",
-                "Fire drill scheduled for this week",
+                "Check locker before leaving",
+                "Fire drill this week", 
                 "New lunch menu available",
-                "Parent-teacher conferences next month"
+                "Parent conferences next month"
             ],
             specialEventText: "SPECIAL EVENT",
-            dynamicCards: true,
             schedule: [
                 { name: "Before school", start: "00:00", end: "08:00", type: "before" },
                 { name: "Period 1", start: "08:00", end: "08:41", type: "period" },
@@ -1190,146 +841,26 @@
             ]
         };
 
-        const PRESET_SCHEDULES = {
-            normal: {
-                name: "Normal Schedule",
-                schedule: [
-                    { name: "Before school", start: "00:00", end: "08:00", type: "before" },
-                    { name: "Period 1", start: "08:00", end: "08:41", type: "period" },
-                    { name: "Period 2", start: "08:45", end: "09:26", type: "period" },
-                    { name: "Period 3", start: "09:31", end: "10:15", type: "period" },
-                    { name: "Period 4", start: "10:20", end: "11:01", type: "period" },
-                    { name: "Period 5", start: "11:06", end: "11:47", type: "period" },
-                    { name: "Period 6", start: "11:52", end: "12:33", type: "period" },
-                    { name: "Period 7", start: "12:38", end: "13:19", type: "period" },
-                    { name: "Period 8", start: "13:24", end: "14:05", type: "period" },
-                    { name: "Period 9", start: "14:09", end: "14:50", type: "period" },
-                    { name: "Period 10", start: "14:54", end: "15:35", type: "period" },
-                    { name: "After school", start: "15:35", end: "23:59", type: "after" }
-                ]
-            },
-            homeroom: {
-                name: "Homeroom Schedule",
-                schedule: [
-                    { name: "Before school", start: "00:00", end: "08:00", type: "before" },
-                    { name: "Period 1", start: "08:00", end: "08:40", type: "period" },
-                    { name: "Period 2", start: "08:45", end: "09:25", type: "period" },
-                    { name: "Period 3", start: "09:29", end: "10:09", type: "period" },
-                    { name: "Homeroom", start: "10:13", end: "10:25", type: "period" },
-                    { name: "Period 4", start: "10:30", end: "11:10", type: "period" },
-                    { name: "Period 5", start: "11:14", end: "11:54", type: "period" },
-                    { name: "Period 6", start: "11:58", end: "12:38", type: "period" },
-                    { name: "Period 7", start: "12:42", end: "13:22", type: "period" },
-                    { name: "Period 8", start: "13:26", end: "14:06", type: "period" },
-                    { name: "Period 9", start: "14:10", end: "14:50", type: "period" },
-                    { name: "Period 10", start: "14:55", end: "15:35", type: "period" },
-                    { name: "After school", start: "15:35", end: "23:59", type: "after" }
-                ]
-            },
-            extendedHomeroom: {
-                name: "Extended Homeroom",
-                schedule: [
-                    { name: "Before school", start: "00:00", end: "08:00", type: "before" },
-                    { name: "Period 1", start: "08:00", end: "08:41", type: "period" },
-                    { name: "Period 2", start: "08:45", end: "09:25", type: "period" },
-                    { name: "Period 3", start: "09:29", end: "10:08", type: "period" },
-                    { name: "Homeroom", start: "10:12", end: "10:33", type: "period" },
-                    { name: "Period 4", start: "10:37", end: "11:16", type: "period" },
-                    { name: "Period 5", start: "11:20", end: "11:59", type: "period" },
-                    { name: "Period 6", start: "12:03", end: "12:42", type: "period" },
-                    { name: "Period 7", start: "12:46", end: "13:25", type: "period" },
-                    { name: "Period 8", start: "13:29", end: "14:08", type: "period" },
-                    { name: "Period 9", start: "14:12", end: "14:51", type: "period" },
-                    { name: "Period 10", start: "14:55", end: "15:35", type: "period" },
-                    { name: "After school", start: "15:35", end: "23:59", type: "after" }
-                ]
-            },
-            meeting: {
-                name: "Meeting Schedule",
-                schedule: [
-                    { name: "Before school", start: "00:00", end: "08:00", type: "before" },
-                    { name: "Period 1", start: "08:00", end: "08:37", type: "period" },
-                    { name: "Period 2", start: "08:41", end: "09:18", type: "period" },
-                    { name: "Period 3", start: "09:22", end: "09:59", type: "period" },
-                    { name: "Period 4", start: "10:03", end: "10:40", type: "period" },
-                    { name: "Period 5", start: "10:44", end: "11:21", type: "period" },
-                    { name: "Period 6", start: "11:25", end: "12:02", type: "period" },
-                    { name: "Period 7", start: "12:06", end: "12:43", type: "period" },
-                    { name: "Period 8", start: "12:47", end: "13:24", type: "period" },
-                    { name: "Period 9", start: "13:28", end: "14:05", type: "period" },
-                    { name: "Period 10", start: "14:09", end: "14:46", type: "period" },
-                    { name: "Meeting", start: "14:50", end: "15:30", type: "period" },
-                    { name: "After school", start: "15:30", end: "23:59", type: "after" }
-                ]
-            }
-        };
+        // Subway lines for status display
+        const SUBWAY_LINES = [
+            { name: '4' }, { name: '5' }, { name: '6' }, { name: 'N' },
+            { name: 'Q' }, { name: 'R' }, { name: 'W' }, { name: 'L' },
+            { name: 'A' }, { name: 'C' }, { name: 'E' }, { name: 'B' },
+            { name: 'D' }, { name: 'F' }, { name: 'M' }, { name: '1' },
+            { name: '2' }, { name: '3' }, { name: '7' }, { name: 'J' }
+        ];
 
         let userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-        let weatherData = { temp: '...', description: 'Loading...', loading: true, error: false };
+        let weatherData = { temp: '...', description: 'Loading...', loading: true };
+        let timezoneData = { html: '<div class="secondary-text">Loading...</div>' };
+        let statsData = { html: '<div class="primary-text">Loading...</div>' };
         let currentAnnouncementIndex = 0;
         let currentAlertIndex = 0;
+        let leftPanelIndex = 0; // 0=weather, 1=timezone, 2=stats
         let subwayData = [];
-        let lastPeriodEndTime = null; // Track when periods end for celebration
-        let emergencyMode = null; // Track current emergency mode
-        let normalScheduleDisplay = null; // Store normal schedule display
-
-        // Card color system
-        const cardColors = [
-            'rgba(255, 99, 132, 0.3)',   // Red
-            'rgba(54, 162, 235, 0.3)',   // Blue  
-            'rgba(255, 205, 86, 0.3)',   // Yellow
-            'rgba(75, 192, 192, 0.3)',   // Teal
-            'rgba(153, 102, 255, 0.3)',  // Purple
-            'rgba(255, 159, 64, 0.3)',   // Orange
-            'rgba(199, 199, 199, 0.3)',  // Gray
-            'rgba(83, 102, 255, 0.3)',   // Indigo
-            'rgba(255, 99, 255, 0.3)',   // Pink
-            'rgba(102, 255, 178, 0.3)',  // Green
-            'rgba(255, 178, 102, 0.3)',  // Peach
-            'rgba(178, 102, 255, 0.3)',  // Lavender
-        ];
-
-        const defaultCardColor = 'rgba(255, 255, 255, 0.1)'; // Original translucent
-
-        // NYC Subway lines and mock data
-        const SUBWAY_LINES = [
-            // Group 1: 4/5/6 (Green)
-            { name: '4', group: '4/5/6', color: '#00933c' },
-            { name: '5', group: '4/5/6', color: '#00933c' },
-            { name: '6', group: '4/5/6', color: '#00933c' },
-            
-            // Group 2: N/Q/R/W (Yellow)
-            { name: 'N', group: 'N/Q/R/W', color: '#fccc0a' },
-            { name: 'Q', group: 'N/Q/R/W', color: '#fccc0a' },
-            { name: 'R', group: 'N/Q/R/W', color: '#fccc0a' },
-            { name: 'W', group: 'N/Q/R/W', color: '#fccc0a' },
-            
-            // Group 3: L (Gray)
-            { name: 'L', group: 'L', color: '#a7a9ac' },
-            
-            // Group 4: A/C/E (Blue)
-            { name: 'A', group: 'A/C/E', color: '#0039a6' },
-            { name: 'C', group: 'A/C/E', color: '#0039a6' },
-            { name: 'E', group: 'A/C/E', color: '#0039a6' },
-            
-            // Group 5: B/D/F/M (Orange)
-            { name: 'B', group: 'B/D/F/M', color: '#ff6319' },
-            { name: 'D', group: 'B/D/F/M', color: '#ff6319' },
-            { name: 'F', group: 'B/D/F/M', color: '#ff6319' },
-            { name: 'M', group: 'B/D/F/M', color: '#ff6319' },
-            
-            // Group 6: 1/2/3 (Red)
-            { name: '1', group: '1/2/3', color: '#ee352e' },
-            { name: '2', group: '1/2/3', color: '#ee352e' },
-            { name: '3', group: '1/2/3', color: '#ee352e' },
-            
-            // Group 7: 7 (Purple)
-            { name: '7', group: '7', color: '#b933ad' },
-            
-            // Group 8: J/Z (Brown)
-            { name: 'J', group: 'J/Z', color: '#996633' },
-            { name: 'Z', group: 'J/Z', color: '#996633' }
-        ];
+        let lastPeriodEndTime = null;
+        let emergencyMode = null;
+        let normalScheduleDisplay = null;
 
         // Utility functions
         function timeToMinutes(timeStr) {
@@ -1349,121 +880,28 @@
         }
 
         function getMonthName() {
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                          'July', 'August', 'September', 'October', 'November', 'December'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             return months[new Date().getMonth()];
         }
 
-        function interpolateColor(color1, color2, factor) {
-            const hex1 = color1.replace('#', '');
-            const hex2 = color2.replace('#', '');
-            
-            const r1 = parseInt(hex1.substr(0, 2), 16);
-            const g1 = parseInt(hex1.substr(2, 2), 16);
-            const b1 = parseInt(hex1.substr(4, 2), 16);
-            
-            const r2 = parseInt(hex2.substr(0, 2), 16);
-            const g2 = parseInt(hex2.substr(2, 2), 16);
-            const b2 = parseInt(hex2.substr(4, 2), 16);
-            
-            const r = Math.round(r1 + (r2 - r1) * factor);
-            const g = Math.round(g1 + (g2 - g1) * factor);
-            const b = Math.round(b1 + (b2 - b1) * factor);
-            
-            return `rgb(${r}, ${g}, ${b})`;
-        }
-
-        // Generate mock subway data
+        // Generate subway status
         function generateSubwayData() {
             const statuses = ['good', 'delays', 'service-change'];
-            const statusText = ['Good Service', 'Delays', 'Service Changes'];
             const now = new Date();
             
             return SUBWAY_LINES.map(line => {
-                // Use a seed based on line name and current hour for consistency
-                let seed = 0;
-                for (let i = 0; i < line.name.length; i++) {
-                    seed += line.name.charCodeAt(i);
-                }
-                seed += now.getHours();
-                
-                // Seeded random for consistent results during the hour
+                let seed = line.name.charCodeAt(0) + now.getHours();
                 const random = ((seed * 9301 + 49297) % 233280) / 233280;
-                
-                // Rush hour (7-9 AM, 5-7 PM) has higher chance of delays
                 const isRushHour = (now.getHours() >= 7 && now.getHours() <= 9) || 
                                  (now.getHours() >= 17 && now.getHours() <= 19);
                 
-                let statusIndex;
-                if (isRushHour) {
-                    statusIndex = random < 0.4 ? 0 : (random < 0.8 ? 1 : 2);
-                } else {
-                    statusIndex = random < 0.7 ? 0 : (random < 0.9 ? 1 : 2);
-                }
+                let statusIndex = isRushHour ? 
+                    (random < 0.4 ? 0 : (random < 0.8 ? 1 : 2)) :
+                    (random < 0.7 ? 0 : (random < 0.9 ? 1 : 2));
                 
-                return {
-                    name: line.name,
-                    color: line.color,
-                    status: statuses[statusIndex],
-                    statusText: statusText[statusIndex]
-                };
+                return { name: line.name, status: statuses[statusIndex] };
             });
-        }
-
-        // Settings management
-        function loadSettings() {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    const parsedSettings = JSON.parse(saved);
-                    if (parsedSettings.city) userSettings.city = parsedSettings.city;
-                    if (parsedSettings.announcements && Array.isArray(parsedSettings.announcements)) {
-                        userSettings.announcements = parsedSettings.announcements;
-                    }
-                    if (parsedSettings.alerts && Array.isArray(parsedSettings.alerts)) {
-                        userSettings.alerts = parsedSettings.alerts;
-                    }
-                    if (parsedSettings.specialEventText) {
-                        userSettings.specialEventText = parsedSettings.specialEventText;
-                    }
-                    if (typeof parsedSettings.dynamicCards === 'boolean') {
-                        userSettings.dynamicCards = parsedSettings.dynamicCards;
-                    }
-                    if (parsedSettings.schedule && Array.isArray(parsedSettings.schedule)) {
-                        const requiredPeriods = ['Before school', 'Period 1', 'Period 2', 'Period 3', 'Period 4', 'Period 5', 'Period 6', 'Period 7', 'Period 8', 'Period 9', 'Period 10', 'After school'];
-                        let validSchedule = true;
-                        for (let periodName of requiredPeriods) {
-                            if (!parsedSettings.schedule.find(p => p.name === periodName)) {
-                                validSchedule = false;
-                                break;
-                            }
-                        }
-                        if (validSchedule) userSettings.schedule = parsedSettings.schedule;
-                    }
-                }
-            } catch (error) {
-                console.warn('Error loading settings, using defaults:', error);
-            }
-        }
-
-        function saveSettingsToStorage() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(userSettings));
-                return true;
-            } catch (error) {
-                console.error('Error saving settings:', error);
-                return false;
-            }
-        }
-
-        function clearSavedSettings() {
-            try {
-                localStorage.removeItem(STORAGE_KEY);
-                return true;
-            } catch (error) {
-                console.error('Error clearing settings:', error);
-                return false;
-            }
         }
 
         // Schedule functions
@@ -1476,16 +914,12 @@
             for (let i = 0; i < periods.length; i++) {
                 fullSchedule.push(periods[i]);
                 if (i < periods.length - 1) {
-                    const currentEnd = periods[i].end;
-                    const nextStart = periods[i + 1].start;
-                    const nextPeriodName = periods[i + 1].name;
-                    
                     fullSchedule.push({
                         name: "Passing",
-                        start: currentEnd,
-                        end: nextStart,
+                        start: periods[i].end,
+                        end: periods[i + 1].start,
                         type: "passing",
-                        next: nextPeriodName
+                        next: periods[i + 1].name
                     });
                 }
             }
@@ -1510,420 +944,242 @@
             return null;
         }
 
-        // Weather functions
-        function generateSmartMockWeather(location) {
+        // Weather function
+        async function fetchWeather() {
             const now = new Date();
             const month = now.getMonth();
-            const day = now.getDate();
-            
-            let seed = 0;
-            for (let i = 0; i < location.length; i++) {
-                seed += location.charCodeAt(i);
-            }
-            seed += day + month * 31;
-            
-            function seededRandom() {
-                seed = (seed * 9301 + 49297) % 233280;
-                return seed / 233280;
-            }
-            
             const monthlyTemps = [32, 38, 48, 58, 68, 78, 82, 80, 72, 62, 48, 36];
-            let baseTemp = monthlyTemps[month];
-            
-            const locationLower = location.toLowerCase();
-            if (locationLower.includes('florida') || locationLower.includes('miami') || locationLower.includes('phoenix')) {
-                baseTemp += 15;
-            } else if (locationLower.includes('alaska') || locationLower.includes('minnesot') || locationLower.includes('maine')) {
-                baseTemp -= 15;
-            } else if (locationLower.includes('california') || locationLower.includes('san diego')) {
-                baseTemp += 8;
-            } else if (locationLower.includes('texas') || locationLower.includes('arizona')) {
-                baseTemp += 10;
-            }
-            
-            const tempVariation = Math.floor(seededRandom() * 16) - 8;
-            const finalTemp = Math.max(0, baseTemp + tempVariation);
-            
             const conditions = ['Clear', 'Partly Cloudy', 'Cloudy', 'Light Rain', 'Sunny'];
-            const winterConditions = ['Cloudy', 'Snow', 'Clear', 'Overcast', 'Light Snow'];
             
-            let weatherConditions = month >= 11 || month <= 2 ? winterConditions : conditions;
-            if (baseTemp > 75) weatherConditions = ['Sunny', 'Clear', 'Partly Cloudy', 'Hot'];
-            
-            const conditionIndex = Math.floor(seededRandom() * weatherConditions.length);
-            const condition = weatherConditions[conditionIndex];
-            
-            return {
-                temp: `${finalTemp}°F`,
-                description: condition
+            weatherData = {
+                temp: `${monthlyTemps[month] + Math.floor(Math.random() * 10) - 5}°F`,
+                description: conditions[Math.floor(Math.random() * conditions.length)],
+                loading: false
             };
         }
 
-        async function fetchWeather() {
-            const originalCity = userSettings.city.trim();
-            if (!originalCity) {
-                weatherData = { temp: 'Error', description: 'No city specified', loading: false, error: true };
-                return;
-            }
-
-            const weatherServices = [
-                async () => {
-                    const response = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=3`);
-                    const text = await response.text();
-                    if (text && text.includes('°')) {
-                        const parts = text.split(':');
-                        if (parts.length >= 2) {
-                            return {
-                                temp: parts[1].split(' ')[1] || 'N/A',
-                                description: parts[1].split(' ').slice(2).join(' ') || 'Clear'
-                            };
-                        }
-                    }
-                    throw new Error('Invalid response format');
-                },
-                async () => {
-                    const response = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=%t`);
-                    const temp = await response.text();
-                    if (temp && temp.includes('°')) {
-                        const response2 = await fetch(`https://wttr.in/${encodeURIComponent(originalCity)}?format=%C`);
-                        const condition = await response2.text();
-                        return { temp: temp.trim(), description: condition.trim() || 'Clear' };
-                    }
-                    throw new Error('Invalid temperature format');
-                }
-            ];
-
-            for (let i = 0; i < weatherServices.length; i++) {
-                try {
-                    const result = await weatherServices[i]();
-                    weatherData = { temp: result.temp, description: result.description, loading: false, error: false };
-                    return;
-                } catch (error) {
-                    // Continue to next service
-                }
-            }
+        // Left panel cycling with MTA-style slide animation
+        function slideLeftPanel() {
+            const headers = ['Weather', 'Time Zones', 'Statistics'];
+            const slides = ['weatherSlide', 'timezoneSlide', 'statsSlide'];
             
-            const mockWeather = generateSmartMockWeather(originalCity);
-            weatherData = { temp: mockWeather.temp, description: mockWeather.description, loading: false, error: false };
+            // Current slide slides out to the left
+            const currentSlide = document.getElementById(slides[leftPanelIndex]);
+            currentSlide.classList.remove('current');
+            currentSlide.classList.add('prev');
+            
+            // Next slide becomes current
+            leftPanelIndex = (leftPanelIndex + 1) % 3;
+            const nextSlide = document.getElementById(slides[leftPanelIndex]);
+            nextSlide.classList.remove('next');
+            nextSlide.classList.add('current');
+            
+            // Update header
+            document.getElementById('leftCyclingHeader').textContent = headers[leftPanelIndex];
+            
+            // Set up the next slide
+            setTimeout(() => {
+                // Reset positions
+                currentSlide.classList.remove('prev');
+                currentSlide.classList.add('next');
+                
+                // Prepare the slide after next
+                const afterNextIndex = (leftPanelIndex + 1) % 3;
+                const afterNextSlide = document.getElementById(slides[afterNextIndex]);
+                afterNextSlide.classList.remove('prev');
+                afterNextSlide.classList.add('next');
+            }, 500);
         }
 
-        // Background color management
-        function updateBackgroundColor(currentPeriod) {
-            const body = document.body;
+        // Slide animations for announcements and alerts
+        function slideAnnouncement() {
+            if (!userSettings.announcements || userSettings.announcements.length === 0) return;
             
-            if (currentPeriod && currentPeriod.type === 'period') {
-                const now = new Date();
-                const startMinutes = timeToMinutes(currentPeriod.start);
-                const endMinutes = timeToMinutes(currentPeriod.end);
-                const currentMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-                
-                const progress = Math.max(0, Math.min(1, (currentMinutes - startMinutes) / (endMinutes - startMinutes)));
-                
-                const startColor1 = '#667eea';
-                const startColor2 = '#764ba2';
-                const endColor1 = '#ff6b6b';
-                const endColor2 = '#c44569';
-                
-                const color1 = interpolateColor(startColor1, endColor1, progress);
-                const color2 = interpolateColor(startColor2, endColor2, progress);
-                
-                body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
-            } else {
-                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            }
-        }
-
-        // Card color management
-        function shuffleCardColors() {
-            if (!userSettings.dynamicCards) {
-                // Reset to static translucent
-                const cards = document.querySelectorAll('.card');
-                cards.forEach(card => {
-                    card.style.background = defaultCardColor;
-                });
-                return;
-            }
-
-            const cards = document.querySelectorAll('.card');
-            const shuffledColors = [...cardColors].sort(() => Math.random() - 0.5);
+            const container = document.getElementById('announcementsInfo');
+            const currentItem = container.querySelector('.announcement-item');
             
-            cards.forEach((card, index) => {
-                const colorIndex = index % shuffledColors.length;
-                card.style.background = shuffledColors[colorIndex];
-                card.style.transition = 'background 2s ease-in-out';
-            });
-        }
-
-        function applyCardColorSetting() {
-            if (userSettings.dynamicCards) {
-                shuffleCardColors(); // Apply colors immediately
-            } else {
-                // Reset to static
-                const cards = document.querySelectorAll('.card');
-                cards.forEach(card => {
-                    card.style.background = defaultCardColor;
-                    card.style.transition = 'background 1s ease-in-out';
-                });
-            }
-        }
-
-        // Card update functions
-        function getCurrentScheduleType() {
-            // Compare current schedule with presets to determine type
-            const currentPeriods = userSettings.schedule.filter(p => p.type === 'period');
-            
-            for (const [key, preset] of Object.entries(PRESET_SCHEDULES)) {
-                const presetPeriods = preset.schedule.filter(p => p.type === 'period');
+            if (currentItem) {
+                currentItem.classList.add('slide-out');
                 
-                // Check if schedules match exactly
-                if (currentPeriods.length === presetPeriods.length) {
-                    let matches = true;
-                    for (let i = 0; i < currentPeriods.length; i++) {
-                        const current = currentPeriods[i];
-                        const presetPeriod = presetPeriods[i];
-                        
-                        if (current.name !== presetPeriod.name || 
-                            current.start !== presetPeriod.start || 
-                            current.end !== presetPeriod.end) {
-                            matches = false;
-                            break;
-                        }
-                    }
+                setTimeout(() => {
+                    currentAnnouncementIndex = (currentAnnouncementIndex + 1) % userSettings.announcements.length;
+                    const newAnnouncement = userSettings.announcements[currentAnnouncementIndex];
                     
-                    if (matches) {
-                        switch (key) {
-                            case 'normal': return 'NORMAL';
-                            case 'homeroom': return 'HOMEROOM';
-                            case 'extendedHomeroom': return 'EXTENDED HOMEROOM';
-                            case 'meeting': return 'MEETING';
-                        }
-                    }
-                }
+                    container.innerHTML = `<div class="announcement-item slide-in">${newAnnouncement}</div>`;
+                    const newItem = container.querySelector('.announcement-item');
+                    
+                    setTimeout(() => {
+                        newItem.classList.remove('slide-in');
+                    }, 50);
+                }, 500);
+            } else {
+                updateAnnouncementsInfo();
             }
-            
-            return null; // Custom schedule, don't show type
         }
 
-        function updateDateCard() {
+        function slideAlert() {
+            if (!userSettings.alerts || userSettings.alerts.length === 0) return;
+            
+            const container = document.getElementById('alertsInfo');
+            const currentItem = container.querySelector('.alert-item');
+            
+            if (currentItem) {
+                currentItem.classList.add('slide-out');
+                
+                setTimeout(() => {
+                    currentAlertIndex = (currentAlertIndex + 1) % userSettings.alerts.length;
+                    const newAlert = userSettings.alerts[currentAlertIndex];
+                    
+                    container.innerHTML = `<div class="alert-item slide-in">${newAlert}</div>`;
+                    const newItem = container.querySelector('.alert-item');
+                    
+                    setTimeout(() => {
+                        newItem.classList.remove('slide-in');
+                    }, 50);
+                }, 500);
+            } else {
+                updateAlertsInfo();
+            }
+        }
+
+        // Update display functions
+        function updateTimeDisplays() {
             const now = new Date();
-            const dateCard = document.getElementById('dateCard');
-            const scheduleType = getCurrentScheduleType();
+            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const fullTimeStr = now.toLocaleTimeString();
             
-            if (scheduleType) {
-                dateCard.innerHTML = `
-                    <h3>Today</h3>
-                    <div class="large-text">${getDayName()}</div>
-                    <div class="medium-text">${getMonthName()} ${now.getDate()}</div>
-                    <div class="small-text">${now.getFullYear()}</div>
-                    <div class="small-text" style="color: #81c784; margin-top: 8px;">${scheduleType}</div>
-                `;
-            } else {
-                dateCard.innerHTML = `
-                    <h3>Today</h3>
-                    <div class="large-text">${getDayName()}</div>
-                    <div class="medium-text">${getMonthName()} ${now.getDate()}</div>
-                    <div class="small-text">${now.getFullYear()}</div>
-                `;
-            }
+            document.getElementById('headerTime').textContent = timeStr;
+            document.getElementById('currentTime').textContent = fullTimeStr;
+            document.getElementById('bottomTime').textContent = `System Time: ${fullTimeStr}`;
         }
 
-        function updateWeatherCard() {
-            const weatherCard = document.getElementById('weatherCard');
-            
-            if (weatherData.loading) {
-                weatherCard.innerHTML = `
-                    <h3>Weather</h3>
-                    <div class="medium-text">Loading...</div>
-                `;
-            } else if (weatherData.error) {
-                weatherCard.innerHTML = `
-                    <h3>Weather</h3>
-                    <div class="small-text" style="color: #ff6b6b;">${weatherData.description}</div>
-                    <div class="small-text">${userSettings.city}</div>
-                `;
-            } else {
-                weatherCard.innerHTML = `
-                    <h3>Weather</h3>
-                    <div class="large-text weather-temp">${weatherData.temp}</div>
-                    <div class="medium-text">${weatherData.description}</div>
-                    <div class="small-text">${userSettings.city}</div>
-                `;
-            }
-        }
-
-        function updateAlertsCard() {
-            const alertsCard = document.getElementById('alertsCard');
-            
-            if (!userSettings.alerts || userSettings.alerts.length === 0) {
-                alertsCard.innerHTML = `
-                    <h3>Alerts</h3>
-                    <div class="medium-text">No alerts configured</div>
-                    <div class="small-text">Add alerts in settings</div>
-                `;
-                return;
-            }
-            
-            const alert = userSettings.alerts[currentAlertIndex];
-            
-            alertsCard.innerHTML = `
-                <h3>Alerts</h3>
-                <div class="alert-text">${alert}</div>
+        function updateDateInfo() {
+            const now = new Date();
+            document.getElementById('dateInfo').innerHTML = `
+                <div class="primary-text">${getDayName()}</div>
+                <div class="secondary-text">${getMonthName()} ${now.getDate()}, ${now.getFullYear()}</div>
             `;
         }
 
-        function updateTimezoneCard() {
-            const now = new Date();
-            const timezoneCard = document.getElementById('timezoneCard');
-            
+        function updateWeatherInfo() {
+            document.getElementById('weatherSlide').innerHTML = `
+                <div class="primary-text">${weatherData.temp}</div>
+                <div class="secondary-text">${weatherData.description}</div>
+                <div class="accent-text">${userSettings.city}</div>
+            `;
+        }
+
+        function updateTimezoneInfo() {
             const timezones = [
                 { name: 'LA', tz: 'America/Los_Angeles' },
                 { name: 'NYC', tz: 'America/New_York' },
-                { name: 'London', tz: 'Europe/London' },
-                { name: 'Tokyo', tz: 'Asia/Tokyo' }
+                { name: 'LON', tz: 'Europe/London' },
+                { name: 'TKY', tz: 'Asia/Tokyo' }
             ];
             
-            const timezoneHTML = timezones.map(tz => {
+            const html = timezones.map(tz => {
                 const time = new Date().toLocaleTimeString('en-US', {
-                    timeZone: tz.tz,
-                    hour: '2-digit',
-                    minute: '2-digit'
+                    timeZone: tz.tz, hour: '2-digit', minute: '2-digit'
                 });
-                return `<div class="timezone-item"><span>${tz.name}</span><span>${time}</span></div>`;
+                return `<div class="secondary-text">${tz.name}: ${time}</div>`;
             }).join('');
             
-            timezoneCard.innerHTML = `
-                <h3>Time Zones</h3>
-                ${timezoneHTML}
+            document.getElementById('timezoneSlide').innerHTML = html;
+        }
+
+        function updateStatsInfo() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+            const daysInYear = 365;
+            
+            document.getElementById('statsSlide').innerHTML = `
+                <div class="primary-text">Day ${dayOfYear}</div>
+                <div class="secondary-text">of ${daysInYear}</div>
+                <div class="accent-text">${Math.round((dayOfYear/daysInYear)*100)}% Complete</div>
             `;
         }
 
-        function updateAnnouncementsCard() {
-            const announcementsCard = document.getElementById('announcementsCard');
-            
-            if (!userSettings.announcements || userSettings.announcements.length === 0) {
-                announcementsCard.innerHTML = `
-                    <h3>Announcements</h3>
-                    <div class="medium-text">No announcements</div>
-                    <div class="small-text">Add announcements in settings</div>
-                `;
-                return;
-            }
-            
-            const announcement = userSettings.announcements[currentAnnouncementIndex];
-            
-            announcementsCard.innerHTML = `
-                <h3>Announcements</h3>
-                <div class="announcement-text">${announcement}</div>
-            `;
-        }
-
-        function updateSubwayCard() {
-            const subwayCard = document.getElementById('subwayCard');
-            
+        function updateSubwayStatus() {
             if (!subwayData.length) {
                 subwayData = generateSubwayData();
             }
             
-            const subwayHTML = subwayData.map(line => {
-                const statusClass = `status-${line.status}`;
-                return `<div class="subway-line-box ${statusClass}" title="${line.name} Line: ${line.statusText}">${line.name}</div>`;
-            }).join('');
+            const html = subwayData.slice(0, 16).map(line => 
+                `<div class="train-indicator line-${line.name} status-${line.status}">${line.name}</div>`
+            ).join('');
             
-            subwayCard.innerHTML = `
-                <h3>NYC Subway</h3>
-                <div class="subway-grid">
-                    ${subwayHTML}
-                </div>
-            `;
+            document.getElementById('subwayStatus').innerHTML = html;
         }
 
-        function updateStatsCard() {
-            const now = new Date();
-            const statsCard = document.getElementById('statsCard');
+        function updateAlertsInfo() {
+            const alertsContainer = document.getElementById('alertsInfo');
             
-            const startOfYear = new Date(now.getFullYear(), 0, 1);
-            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
-            
-            const daysInYear = new Date(now.getFullYear(), 11, 31).getDate() === 31 ? 365 : 366;
-            const weekOfYear = Math.ceil(dayOfYear / 7);
-            
-            statsCard.innerHTML = `
-                <h3>Quick Stats</h3>
-                <div class="medium-text">Day ${dayOfYear} of ${daysInYear}</div>
-                <div class="small-text">Week ${weekOfYear}</div>
-                <div class="small-text">${Math.round((dayOfYear/daysInYear)*100)}% through year</div>
-            `;
-        }
-
-        function updateNewsCard() {
-            const newsCard = document.getElementById('newsCard');
-            
-            // Trump administration dates
-            const inaugurationDate = new Date('2025-01-20'); // January 20, 2025
-            const endDate = new Date('2029-01-20'); // January 20, 2029
-            const now = new Date();
-            
-            // Calculate days
-            const totalDays = Math.floor((endDate - inaugurationDate) / (1000 * 60 * 60 * 24));
-            const daysInto = Math.floor((now - inaugurationDate) / (1000 * 60 * 60 * 24));
-            const daysLeft = Math.floor((endDate - now) / (1000 * 60 * 60 * 24));
-            const percentComplete = Math.max(0, Math.min(100, (daysInto / totalDays) * 100));
-            
-            // Handle cases before/after the term
-            if (now < inaugurationDate) {
-                const daysUntilStart = Math.floor((inaugurationDate - now) / (1000 * 60 * 60 * 24));
-                newsCard.innerHTML = `
-                    <h3>Administration</h3>
-                    <div class="medium-text">Starts in ${daysUntilStart} days</div>
-                    <div class="small-text">January 20, 2025</div>
-                `;
-            } else if (now > endDate) {
-                newsCard.innerHTML = `
-                    <h3>Administration</h3>
-                    <div class="medium-text">Term Completed</div>
-                    <div class="small-text">Ended ${Math.abs(daysLeft)} days ago</div>
-                `;
-            } else {
-                newsCard.innerHTML = `
-                    <h3>Administration</h3>
-                    <div class="medium-text">Day ${daysInto.toLocaleString()}</div>
-                    <div class="small-text">${daysLeft.toLocaleString()} days left</div>
-                    <div class="small-text">${percentComplete.toFixed(1)}% complete</div>
-                    <div class="progress-bar" style="margin-top: 8px;">
-                        <div class="progress-fill" style="width: ${percentComplete}%"></div>
-                    </div>
-                `;
-            }
-        }
-
-        function updateScheduleCard() {
-            // Don't update schedule card if in emergency mode
-            if (emergencyMode) {
+            if (!userSettings.alerts || userSettings.alerts.length === 0) {
+                alertsContainer.innerHTML = '<div class="secondary-text">No active alerts</div>';
                 return;
             }
             
-            const now = new Date();
-            const currentTime = now.toLocaleTimeString();
-            const currentPeriod = getCurrentPeriod();
-            const display = document.getElementById('display');
-            const timeDisplay = document.getElementById('currentTime');
+            const alert = userSettings.alerts[currentAlertIndex];
+            alertsContainer.innerHTML = `<div class="alert-item">${alert}</div>`;
+        }
+
+        function updateAnnouncementsInfo() {
+            const announcementsContainer = document.getElementById('announcementsInfo');
             
-            updateBackgroundColor(currentPeriod);
-            checkPeriodEnd(); // Check for period end to trigger celebration
+            if (!userSettings.announcements || userSettings.announcements.length === 0) {
+                announcementsContainer.innerHTML = '<div class="secondary-text">No announcements</div>';
+                return;
+            }
+            
+            const announcement = userSettings.announcements[currentAnnouncementIndex];
+            announcementsContainer.innerHTML = `<div class="announcement-item">${announcement}</div>`;
+        }
+
+        function updateAdminInfo() {
+            const inaugurationDate = new Date('2025-01-20');
+            const endDate = new Date('2029-01-20');
+            const now = new Date();
+            
+            if (now < inaugurationDate) {
+                const daysUntil = Math.floor((inaugurationDate - now) / (1000 * 60 * 60 * 24));
+                document.getElementById('adminInfo').innerHTML = `
+                    <div class="primary-text">Term Begins</div>
+                    <div class="secondary-text">${daysUntil} days</div>
+                `;
+            } else if (now > endDate) {
+                document.getElementById('adminInfo').innerHTML = `
+                    <div class="primary-text">Term Complete</div>
+                `;
+            } else {
+                const daysInto = Math.floor((now - inaugurationDate) / (1000 * 60 * 60 * 24));
+                const daysLeft = Math.floor((endDate - now) / (1000 * 60 * 60 * 24));
+                document.getElementById('adminInfo').innerHTML = `
+                    <div class="primary-text">Day ${daysInto.toLocaleString()}</div>
+                    <div class="secondary-text">${daysLeft.toLocaleString()} remaining</div>
+                `;
+            }
+        }
+
+        function updateScheduleDisplay() {
+            if (emergencyMode) return;
+            
+            const now = new Date();
+            const currentPeriod = getCurrentPeriod();
+            const display = document.getElementById('periodDisplay');
+            
+            checkPeriodEnd();
             
             if (!currentPeriod) {
-                display.innerHTML = '<div class="before-after">Unknown</div>';
-                timeDisplay.textContent = currentTime;
+                display.innerHTML = '<div class="before-after-text">System Ready</div>';
                 return;
             }
 
             if (currentPeriod.type === 'before') {
-                display.innerHTML = '<div class="before-after">Before</div>';
-                timeDisplay.textContent = currentTime;
+                display.innerHTML = '<div class="before-after-text">Before School</div>';
             } 
             else if (currentPeriod.type === 'after') {
-                display.innerHTML = '<div class="before-after">After</div>';
-                timeDisplay.textContent = currentTime;
+                display.innerHTML = '<div class="before-after-text">After School</div>';
             }
             else if (currentPeriod.type === 'passing') {
                 const endMinutes = timeToMinutes(currentPeriod.end);
@@ -1932,413 +1188,25 @@
                 const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
                 
                 display.innerHTML = `
-                    <div class="status">Passing</div>
-                    <div class="countdown">${formatCountdown(totalSecondsLeft)} to START</div>
-                    <div class="next-info">Next: ${currentPeriod.next}</div>
+                    <div class="status-label">Passing Period</div>
+                    <div class="countdown-time">${formatCountdown(totalSecondsLeft)}</div>
+                    <div class="secondary-text">Next: ${currentPeriod.next}</div>
                 `;
-                timeDisplay.textContent = currentTime;
             }
             else if (currentPeriod.type === 'period') {
                 const endMinutes = timeToMinutes(currentPeriod.end);
                 const currentMinutes = now.getHours() * 60 + now.getMinutes();
                 const currentSeconds = now.getSeconds();
                 const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
-                const minutesLeft = Math.floor(totalSecondsLeft / 60);
                 
-                if (minutesLeft <= 15) {
-                    display.innerHTML = `
-                        <div class="status">${currentPeriod.name}</div>
-                        <div class="countdown">${formatCountdown(totalSecondsLeft)} to END</div>
-                    `;
-                    timeDisplay.textContent = currentTime;
-                } else {
-                    display.innerHTML = `
-                        <div class="period-info">${getDayName()}</div>
-                        <div class="status">${currentPeriod.name}</div>
-                        <div class="weather-info">
-                            <span class="weather-temp">${weatherData.temp}</span>
-                            <span>${weatherData.description}</span>
-                        </div>
-                    `;
-                    timeDisplay.textContent = `${formatCountdown(totalSecondsLeft)} to end`;
-                }
+                display.innerHTML = `
+                    <div class="period-header">${currentPeriod.name}</div>
+                    <div class="countdown-time">${formatCountdown(totalSecondsLeft)}</div>
+                    <div class="status-label">Time Remaining</div>
+                `;
             }
         }
 
-        // Settings UI functions
-        function openSettings() {
-            document.getElementById('settingsOverlay').style.display = 'flex';
-            document.getElementById('cityInput').value = userSettings.city;
-            document.getElementById('announcementsInput').value = userSettings.announcements.join('\n');
-            document.getElementById('alertsInput').value = userSettings.alerts.join('\n');
-            document.getElementById('specialEventInput').value = userSettings.specialEventText;
-            document.getElementById('dynamicCardsToggle').checked = userSettings.dynamicCards;
-            generateScheduleInputs();
-        }
-        
-        function closeSettings() {
-            document.getElementById('settingsOverlay').style.display = 'none';
-            // Close emergency options if open
-            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
-            if (emergencyOptions) {
-                emergencyOptions.classList.remove('show');
-            }
-            clearMessages();
-        }
-        
-        function clearMessages() {
-            document.getElementById('scheduleError').style.display = 'none';
-            document.getElementById('weatherError').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
-        }
-        
-        function generateScheduleInputs() {
-            const container = document.getElementById('scheduleInputs');
-            const periods = userSettings.schedule.filter(p => p.type === 'period');
-            
-            container.innerHTML = periods.map(period => `
-                <div class="period-input">
-                    <label>${period.name}:</label>
-                    <input type="time" value="${period.start}" data-period="${period.name}" data-field="start">
-                    <span>to</span>
-                    <input type="time" value="${period.end}" data-period="${period.name}" data-field="end">
-                </div>
-            `).join('');
-        }
-        
-        function applyPreset(presetKey) {
-            if (PRESET_SCHEDULES[presetKey]) {
-                clearMessages();
-                userSettings.schedule = JSON.parse(JSON.stringify(PRESET_SCHEDULES[presetKey].schedule));
-                generateScheduleInputs();
-                updateDateCard(); // Update date card to show new schedule type immediately
-                
-                const successMsg = document.getElementById('successMessage');
-                successMsg.textContent = `${PRESET_SCHEDULES[presetKey].name} applied! Click Save to confirm.`;
-                successMsg.style.display = 'block';
-            }
-        }
-        
-        function validateSchedule(periods) {
-            const errors = [];
-            const sortedPeriods = [...periods].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
-            
-            for (let i = 0; i < sortedPeriods.length; i++) {
-                const period = sortedPeriods[i];
-                const startMin = timeToMinutes(period.start);
-                const endMin = timeToMinutes(period.end);
-                
-                if (startMin >= endMin) {
-                    errors.push(`${period.name} ends before or at the same time it starts`);
-                }
-                
-                if (i < sortedPeriods.length - 1) {
-                    const nextPeriod = sortedPeriods[i + 1];
-                    const nextStartMin = timeToMinutes(nextPeriod.start);
-                    
-                    if (endMin > nextStartMin) {
-                        errors.push(`${period.name} overlaps with ${nextPeriod.name}`);
-                    }
-                }
-                
-                if (endMin - startMin < 5) {
-                    errors.push(`${period.name} is too short (less than 5 minutes)`);
-                }
-                
-                if (endMin - startMin > 120) {
-                    errors.push(`${period.name} is very long (more than 2 hours)`);
-                }
-            }
-            
-            return errors;
-        }
-
-        function saveSettings() {
-            clearMessages();
-            
-            const newCity = document.getElementById('cityInput').value || 'New York, NY';
-            const newAnnouncementsText = document.getElementById('announcementsInput').value || '';
-            const newAnnouncements = newAnnouncementsText.split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0);
-            const newAlertsText = document.getElementById('alertsInput').value || '';
-            const newAlerts = newAlertsText.split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0);
-            const newSpecialEventText = document.getElementById('specialEventInput').value || 'SPECIAL EVENT';
-            const newDynamicCards = document.getElementById('dynamicCardsToggle').checked;
-            const tempSchedule = [...userSettings.schedule];
-            const inputs = document.querySelectorAll('#scheduleInputs input');
-            
-            inputs.forEach(input => {
-                const periodName = input.dataset.period;
-                const field = input.dataset.field;
-                const period = tempSchedule.find(p => p.name === periodName);
-                if (period && input.value) {
-                    period[field] = input.value;
-                }
-            });
-            
-            const periods = tempSchedule.filter(p => p.type === 'period');
-            const scheduleErrors = validateSchedule(periods);
-            
-            if (scheduleErrors.length > 0) {
-                const errorMsg = document.getElementById('scheduleError');
-                errorMsg.innerHTML = '<strong>Schedule Errors:</strong><br>' + scheduleErrors.join('<br>');
-                errorMsg.style.display = 'block';
-                return;
-            }
-            
-            userSettings.city = newCity;
-            userSettings.announcements = newAnnouncements.length > 0 ? newAnnouncements : DEFAULT_SETTINGS.announcements;
-            userSettings.alerts = newAlerts.length > 0 ? newAlerts : DEFAULT_SETTINGS.alerts;
-            userSettings.specialEventText = newSpecialEventText;
-            userSettings.dynamicCards = newDynamicCards;
-            userSettings.schedule = tempSchedule;
-            
-            const lastPeriod = userSettings.schedule.filter(p => p.type === 'period').pop();
-            const afterSchool = userSettings.schedule.find(p => p.type === 'after');
-            if (lastPeriod && afterSchool) {
-                afterSchool.start = lastPeriod.end;
-            }
-            
-            const savedSuccessfully = saveSettingsToStorage();
-            
-            const successMsg = document.getElementById('successMessage');
-            successMsg.textContent = savedSuccessfully ? 
-                'Settings saved successfully!' : 
-                'Settings saved for this session (localStorage unavailable)';
-            successMsg.style.display = 'block';
-            
-            // Reset announcement indices
-            currentAnnouncementIndex = 0;
-            currentAlertIndex = 0;
-            
-            // Apply card color setting immediately
-            applyCardColorSetting();
-            
-            // If city changed, fetch new weather and update weather card
-            fetchWeather().then(() => {
-                updateWeatherCard();
-            });
-            updateDateCard(); // Update date card to show new schedule type
-            updateAnnouncementsCard();
-            updateAlertsCard();
-            
-            setTimeout(() => {
-                closeSettings();
-            }, 2000);
-        }
-        
-        function resetSettings() {
-            if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
-                clearSavedSettings();
-                userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-                currentAnnouncementIndex = 0;
-                currentAlertIndex = 0;
-                applyCardColorSetting(); // Apply default card setting
-                openSettings();
-                fetchWeather().then(() => {
-                    updateWeatherCard();
-                });
-                updateDateCard(); // Update date card to show schedule type
-                updateAnnouncementsCard();
-                updateAlertsCard();
-                
-                const successMsg = document.getElementById('successMessage');
-                successMsg.textContent = 'All settings have been reset to defaults!';
-                successMsg.style.display = 'block';
-            }
-        }
-        
-        function exportSettings() {
-            try {
-                const exportData = {
-                    version: APP_VERSION,
-                    exported: new Date().toISOString(),
-                    settings: userSettings
-                };
-                
-                const dataStr = JSON.stringify(exportData, null, 2);
-                const dataBlob = new Blob([dataStr], {type: 'application/json'});
-                
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(dataBlob);
-                link.download = `school-dashboard-backup-${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                const successMsg = document.getElementById('successMessage');
-                successMsg.textContent = 'Settings exported successfully!';
-                successMsg.style.display = 'block';
-                
-            } catch (error) {
-                const errorMsg = document.getElementById('scheduleError');
-                errorMsg.textContent = 'Error exporting settings: ' + error.message;
-                errorMsg.style.display = 'block';
-            }
-        }
-        
-        function importSettings() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            
-            input.onchange = function(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const importData = JSON.parse(e.target.result);
-                        
-                        if (importData.settings && importData.settings.city && importData.settings.schedule) {
-                            userSettings = importData.settings;
-                            // Ensure required settings exist
-                            if (!userSettings.announcements || !Array.isArray(userSettings.announcements)) {
-                                userSettings.announcements = DEFAULT_SETTINGS.announcements;
-                            }
-                            if (!userSettings.alerts || !Array.isArray(userSettings.alerts)) {
-                                userSettings.alerts = DEFAULT_SETTINGS.alerts;
-                            }
-                            if (!userSettings.specialEventText) {
-                                userSettings.specialEventText = DEFAULT_SETTINGS.specialEventText;
-                            }
-                            if (typeof userSettings.dynamicCards !== 'boolean') {
-                                userSettings.dynamicCards = DEFAULT_SETTINGS.dynamicCards;
-                            }
-                            
-                            currentAnnouncementIndex = 0;
-                            currentAlertIndex = 0;
-                            saveSettingsToStorage();
-                            applyCardColorSetting(); // Apply imported card setting
-                            openSettings();
-                            fetchWeather().then(() => {
-                                updateWeatherCard();
-                            });
-                            updateDateCard(); // Update date card to show schedule type
-                            updateAnnouncementsCard();
-                            updateAlertsCard();
-                            
-                            const successMsg = document.getElementById('successMessage');
-                            successMsg.textContent = 'Settings imported successfully!';
-                            successMsg.style.display = 'block';
-                        } else {
-                            throw new Error('Invalid settings file format');
-                        }
-                    } catch (error) {
-                        const errorMsg = document.getElementById('scheduleError');
-                        errorMsg.textContent = 'Error importing settings: ' + error.message;
-                        errorMsg.style.display = 'block';
-                    }
-                };
-                reader.readAsText(file);
-            };
-            
-            input.click();
-        }
-
-        // Celebration effects
-        function triggerCelebration() {
-            // Create radiating halo attached to body for full screen effect
-            const halo = document.createElement('div');
-            halo.className = 'celebration-halo';
-            document.body.appendChild(halo);
-            
-            // Start rainbow card shuffling effect
-            startRainbowCardShuffle();
-            
-            // Create confetti across entire screen
-            const colors = ['', 'red', 'blue', 'green', 'orange', 'purple', 'pink', 'cyan', 'lime', 'indigo'];
-            
-            // Much more confetti for full screen coverage
-            for (let i = 0; i < 80; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = `confetti-piece ${colors[Math.floor(Math.random() * colors.length)]}`;
-                
-                // Random trajectory covering entire screen
-                const angle = (Math.PI * 2 * i) / 80 + (Math.random() - 0.5) * 0.5;
-                const distance = 400 + Math.random() * 800; // Much larger spread
-                const x = Math.cos(angle) * distance;
-                const y = Math.sin(angle) * distance;
-                
-                confetti.style.setProperty('--x', `${x}px`);
-                confetti.style.setProperty('--y', `${y}px`);
-                confetti.style.animation = `confettiFall ${2 + Math.random() * 2}s ease-out forwards`;
-                confetti.style.animationDelay = `${Math.random() * 0.8}s`;
-                
-                document.body.appendChild(confetti);
-                
-                // Clean up confetti after animation
-                setTimeout(() => {
-                    if (confetti.parentNode) {
-                        confetti.parentNode.removeChild(confetti);
-                    }
-                }, 5000);
-            }
-            
-            // Clean up halo after animation
-            setTimeout(() => {
-                if (halo.parentNode) {
-                    halo.parentNode.removeChild(halo);
-                }
-            }, 3000);
-        }
-        
-        function startRainbowCardShuffle() {
-            const cards = document.querySelectorAll('.card');
-            let shuffleCount = 0;
-            const maxShuffles = 12; // 3 seconds / 0.25 seconds = 12 shuffles
-            
-            // Extended rainbow colors for more variety
-            const rainbowColors = [
-                'rgba(255, 0, 0, 0.4)',     // Red
-                'rgba(255, 127, 0, 0.4)',   // Orange
-                'rgba(255, 255, 0, 0.4)',   // Yellow
-                'rgba(127, 255, 0, 0.4)',   // Spring Green
-                'rgba(0, 255, 0, 0.4)',     // Green
-                'rgba(0, 255, 127, 0.4)',   // Turquoise
-                'rgba(0, 255, 255, 0.4)',   // Cyan
-                'rgba(0, 127, 255, 0.4)',   // Azure
-                'rgba(0, 0, 255, 0.4)',     // Blue
-                'rgba(127, 0, 255, 0.4)',   // Violet
-                'rgba(255, 0, 255, 0.4)',   // Magenta
-                'rgba(255, 0, 127, 0.4)',   // Rose
-                'rgba(255, 192, 203, 0.4)', // Pink
-                'rgba(255, 105, 180, 0.4)', // Hot Pink
-                'rgba(255, 20, 147, 0.4)',  // Deep Pink
-                'rgba(138, 43, 226, 0.4)',  // Blue Violet
-                'rgba(75, 0, 130, 0.4)',    // Indigo
-                'rgba(255, 215, 0, 0.4)',   // Gold
-                'rgba(255, 69, 0, 0.4)',    // Red Orange
-                'rgba(50, 205, 50, 0.4)',   // Lime Green
-            ];
-            
-            const shuffleInterval = setInterval(() => {
-                // Shuffle colors for each card
-                const shuffledColors = [...rainbowColors].sort(() => Math.random() - 0.5);
-                
-                cards.forEach((card, index) => {
-                    const colorIndex = index % shuffledColors.length;
-                    card.style.background = shuffledColors[colorIndex];
-                    card.style.transition = 'background 0.1s ease-in-out';
-                });
-                
-                shuffleCount++;
-                
-                if (shuffleCount >= maxShuffles) {
-                    clearInterval(shuffleInterval);
-                    
-                    // Return cards to normal state after celebration
-                    setTimeout(() => {
-                        applyCardColorSetting();
-                    }, 500);
-                }
-            }, 250); // Every 0.25 seconds
-        }
-        
         function checkPeriodEnd() {
             const now = new Date();
             const currentPeriod = getCurrentPeriod();
@@ -2349,7 +1217,6 @@
                 const currentSeconds = now.getSeconds();
                 const totalSecondsLeft = (endMinutes - currentMinutes) * 60 - currentSeconds;
                 
-                // Trigger celebration when period ends (within 1 second window)
                 if (totalSecondsLeft <= 1 && totalSecondsLeft >= 0) {
                     const periodEndKey = `${currentPeriod.name}-${now.toDateString()}`;
                     if (lastPeriodEndTime !== periodEndKey) {
@@ -2359,240 +1226,300 @@
                 }
             }
         }
-        
-        // Code protection functions
+
+        // Celebration effects
+        function triggerCelebration() {
+            const halo = document.createElement('div');
+            halo.className = 'celebration-halo';
+            document.body.appendChild(halo);
+            
+            const colors = ['yellow', 'red', 'blue', 'green', 'orange', 'purple'];
+            
+            for (let i = 0; i < 60; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = `confetti-piece ${colors[Math.floor(Math.random() * colors.length)]}`;
+                
+                const angle = (Math.PI * 2 * i) / 60;
+                const distance = 300 + Math.random() * 600;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                confetti.style.setProperty('--x', `${x}px`);
+                confetti.style.setProperty('--y', `${y}px`);
+                confetti.style.animation = `confettiFall ${2 + Math.random()}s ease-out forwards`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 3000);
+            }
+            
+            setTimeout(() => halo.remove(), 3000);
+        }
+
+        // Settings and modal functions
         function promptForCode() {
-            document.getElementById('codeOverlay').style.display = 'flex';
+            document.getElementById('codeModal').style.display = 'flex';
             document.getElementById('codeInput').focus();
         }
         
         function closeCodePrompt() {
-            document.getElementById('codeOverlay').style.display = 'none';
+            document.getElementById('codeModal').style.display = 'none';
             document.getElementById('codeInput').value = '';
             document.getElementById('codeError').style.display = 'none';
         }
         
         function checkCode() {
-            const enteredCode = document.getElementById('codeInput').value;
-            const correctCode = '1551';
-            
-            if (enteredCode === correctCode) {
+            const code = document.getElementById('codeInput').value;
+            if (code === '1551') {
                 closeCodePrompt();
                 openSettings();
             } else {
                 document.getElementById('codeError').style.display = 'block';
                 document.getElementById('codeInput').value = '';
-                document.getElementById('codeInput').focus();
             }
         }
-        
-        // Settings UI functions
+
         function openSettings() {
-            document.getElementById('settingsOverlay').style.display = 'flex';
+            document.getElementById('settingsModal').style.display = 'flex';
             document.getElementById('cityInput').value = userSettings.city;
             document.getElementById('announcementsInput').value = userSettings.announcements.join('\n');
             document.getElementById('alertsInput').value = userSettings.alerts.join('\n');
-            document.getElementById('dynamicCardsToggle').checked = userSettings.dynamicCards;
+            document.getElementById('specialEventInput').value = userSettings.specialEventText;
             generateScheduleInputs();
         }
         
-        function toggleEmergencyOptionsSettings() {
-            const options = document.getElementById('emergencyOptionsSettings');
-            options.classList.toggle('show');
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+            document.getElementById('emergencyOptions').style.display = 'none';
         }
-        
-        function activateEmergency(type) {
-            // Hide emergency options
-            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
-            if (emergencyOptions) {
-                emergencyOptions.classList.remove('show');
+
+        function toggleEmergencyOptions() {
+            const options = document.getElementById('emergencyOptions');
+            options.style.display = options.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function generateScheduleInputs() {
+            const container = document.getElementById('scheduleInputs');
+            const periods = userSettings.schedule.filter(p => p.type === 'period');
+            
+            container.innerHTML = periods.map(period => `
+                <div style="display: flex; align-items: center; margin-bottom: 8px; gap: 8px;">
+                    <div style="width: 80px; font-size: 0.8rem;">${period.name}:</div>
+                    <input type="time" class="form-input" style="width: 80px; padding: 4px;" value="${period.start}" data-period="${period.name}" data-field="start">
+                    <span style="font-size: 0.8rem;">to</span>
+                    <input type="time" class="form-input" style="width: 80px; padding: 4px;" value="${period.end}" data-period="${period.name}" data-field="end">
+                </div>
+            `).join('');
+        }
+
+        function saveSettings() {
+            userSettings.city = document.getElementById('cityInput').value || 'New York, NY';
+            userSettings.announcements = document.getElementById('announcementsInput').value.split('\n')
+                .map(line => line.trim()).filter(line => line.length > 0);
+            userSettings.alerts = document.getElementById('alertsInput').value.split('\n')
+                .map(line => line.trim()).filter(line => line.length > 0);
+            userSettings.specialEventText = document.getElementById('specialEventInput').value || 'SPECIAL EVENT';
+            
+            // Update schedule
+            const inputs = document.querySelectorAll('#scheduleInputs input');
+            inputs.forEach(input => {
+                const period = userSettings.schedule.find(p => p.name === input.dataset.period);
+                if (period && input.value) {
+                    period[input.dataset.field] = input.value;
+                }
+            });
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userSettings));
+            fetchWeather();
+            currentAnnouncementIndex = 0;
+            currentAlertIndex = 0;
+            
+            showStatusMessage('Configuration saved successfully', 'success');
+            setTimeout(closeSettings, 1500);
+        }
+
+        function showStatusMessage(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.style.display = 'block';
+            statusEl.style.background = type === 'success' ? '#4ade80' : '#ef4444';
+            statusEl.style.color = '#000000';
+        }
+
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    userSettings = { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+                }
+            } catch (error) {
+                console.warn('Error loading settings:', error);
             }
+        }
+
+        function exportSettings() {
+            const dataStr = JSON.stringify({
+                version: APP_VERSION,
+                exported: new Date().toISOString(),
+                settings: userSettings
+            }, null, 2);
             
-            // Set emergency mode
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `school-dashboard-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importSettings() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            if (data.settings) {
+                                userSettings = { ...DEFAULT_SETTINGS, ...data.settings };
+                                localStorage.setItem(STORAGE_KEY, JSON.stringify(userSettings));
+                                openSettings();
+                                showStatusMessage('Configuration imported successfully', 'success');
+                            }
+                        } catch (error) {
+                            showStatusMessage('Error importing configuration', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function resetSettings() {
+            if (confirm('Reset all configuration to defaults?')) {
+                userSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+                localStorage.removeItem(STORAGE_KEY);
+                openSettings();
+                showStatusMessage('Configuration reset to defaults', 'success');
+            }
+        }
+
+        // Emergency functions
+        function activateEmergency(type) {
             emergencyMode = type;
+            document.body.classList.add('emergency-active', `emergency-${type}`);
             
-            // Add emergency class to body
-            document.body.classList.add('emergency-active');
-            document.body.classList.add(`emergency-${type}`);
+            const display = document.getElementById('scheduleDisplay');
+            normalScheduleDisplay = display.innerHTML;
             
-            // Store the current schedule display
-            const scheduleCard = document.querySelector('.schedule-card .card-content');
-            normalScheduleDisplay = scheduleCard.innerHTML;
-            
-            // Update center card with emergency text
-            let emergencyText = '';
-            let textClass = '';
+            let text = '';
+            let subtext = '';
+            let className = '';
+            let infoText = '';
             
             switch(type) {
                 case 'lockdown':
-                    emergencyText = 'LOCKDOWN';
-                    textClass = 'lockdown-text';
+                    text = 'LOCKDOWN';
+                    subtext = 'REMAIN IN PLACE';
+                    className = 'lockdown-text';
+                    infoText = 'Follow all instructions from school officials';
                     break;
                 case 'shelter':
-                    emergencyText = 'SHELTER IN';
-                    textClass = 'shelter-text';
+                    text = 'SHELTER IN PLACE';
+                    subtext = 'STAY INDOORS';
+                    className = 'shelter-text';
+                    infoText = 'Remain in current location until further notice';
                     break;
                 case 'fire':
-                    emergencyText = 'FIRE FIRE FIRE';
-                    textClass = 'fire-text';
+                    text = 'FIRE EMERGENCY';
+                    subtext = 'EVACUATE NOW';
+                    className = 'fire-text';
+                    infoText = 'Follow emergency exit procedures immediately';
                     break;
                 case 'special':
-                    emergencyText = userSettings.specialEventText || 'SPECIAL EVENT';
-                    textClass = 'special-text';
+                    text = userSettings.specialEventText;
+                    subtext = 'SPECIAL ANNOUNCEMENT';
+                    className = 'special-text';
+                    infoText = 'Please follow staff instructions';
                     break;
             }
             
-            scheduleCard.innerHTML = `<div class="emergency-text ${textClass}">${emergencyText}</div>`;
-            
-            // Ensure settings button stays visible
-            const settingsBtn = document.querySelector('.settings-btn');
-            settingsBtn.style.zIndex = '1000';
-            
-            // Close settings if open
+            display.innerHTML = `
+                <div class="emergency-text ${className}">${text}</div>
+                <div class="emergency-subtext ${className}">${subtext}</div>
+                <div class="emergency-info-bar">${infoText}</div>
+            `;
             closeSettings();
         }
         
         function deactivateEmergency() {
-            // Hide emergency options
-            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
-            if (emergencyOptions) {
-                emergencyOptions.classList.remove('show');
-            }
-            
-            // Remove emergency classes
             document.body.classList.remove('emergency-active', 'emergency-lockdown', 'emergency-shelter', 'emergency-fire', 'emergency-special');
             
-            // Restore normal schedule display
             if (normalScheduleDisplay) {
-                const scheduleCard = document.querySelector('.schedule-card .card-content');
-                scheduleCard.innerHTML = normalScheduleDisplay;
+                document.getElementById('scheduleDisplay').innerHTML = normalScheduleDisplay;
                 normalScheduleDisplay = null;
             }
             
-            // Reset emergency mode
             emergencyMode = null;
-            
-            // Reset z-index values
-            const settingsBtn = document.querySelector('.settings-btn');
-            settingsBtn.style.zIndex = '100';
-            
-            // Apply current card color settings
-            applyCardColorSetting();
-        }
-        // Announcement cycling functions
-        function cycleAnnouncements() {
-            if (userSettings.announcements && userSettings.announcements.length > 0) {
-                currentAnnouncementIndex = (currentAnnouncementIndex + 1) % userSettings.announcements.length;
-                updateAnnouncementsCard();
-            }
-        }
-
-        function cycleAlerts() {
-            if (userSettings.alerts && userSettings.alerts.length > 0) {
-                currentAlertIndex = (currentAlertIndex + 1) % userSettings.alerts.length;
-                updateAlertsCard();
-            }
         }
 
         // Main update function
-        function updateAllCards() {
-            updateDateCard();
-            updateWeatherCard();
-            updateAlertsCard();
-            updateTimezoneCard();
-            updateAnnouncementsCard();
-            updateSubwayCard();
-            updateStatsCard();
-            updateNewsCard();
-            updateScheduleCard();
+        function updateAll() {
+            updateTimeDisplays();
+            updateDateInfo();
+            updateWeatherInfo();
+            updateTimezoneInfo();
+            updateStatsInfo();
+            updateSubwayStatus();
+            updateAlertsInfo();
+            updateAnnouncementsInfo();
+            updateAdminInfo();
+            updateScheduleDisplay();
         }
 
-        // Keyboard shortcuts and click handlers
+        // Event listeners
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeSettings();
                 closeCodePrompt();
-                // Close emergency options if open
-                const emergencyOptions = document.getElementById('emergencyOptionsSettings');
-                if (emergencyOptions) {
-                    emergencyOptions.classList.remove('show');
-                }
-                // Exit emergency mode if active
-                if (emergencyMode) {
-                    deactivateEmergency();
-                }
-            } else if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
-                event.preventDefault();
-                promptForCode();
-            } else if (event.key === 'Enter' && document.getElementById('codeOverlay').style.display === 'flex') {
+                if (emergencyMode) deactivateEmergency();
+            } else if (event.key === 'Enter' && document.getElementById('codeModal').style.display === 'flex') {
                 checkCode();
             }
         });
-        
-        // Close emergency options when clicking outside
-        document.addEventListener('click', function(event) {
-            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
-            const emergencyBtn = document.querySelector('.emergency-btn-settings');
-            
-            if (emergencyOptions && emergencyBtn && 
-                !emergencyOptions.contains(event.target) && 
-                !emergencyBtn.contains(event.target) && 
-                emergencyOptions.classList.contains('show')) {
-                emergencyOptions.classList.remove('show');
-            }
-        });
 
-        // Initialize application
-        function initializeApp() {
+        // Initialize
+        function initialize() {
             loadSettings();
-            fetchWeather().then(() => {
-                updateWeatherCard();
-            });
-            updateAllCards();
-            applyCardColorSetting();
+            fetchWeather();
+            updateAll();
             
-            // Update schedule every second, other cards every minute
-            setInterval(updateScheduleCard, 1000);
-            setInterval(() => {
-                updateDateCard();
-                updateWeatherCard();
-                updateTimezoneCard();
-                updateStatsCard();
-                updateNewsCard();
-            }, 60000);
-            
-            // Update weather every 10 minutes
-            setInterval(() => {
-                fetchWeather().then(() => {
-                    updateWeatherCard();
-                });
-            }, 600000);
-            
-            // Update subway data every hour
+            // Set intervals
+            setInterval(updateScheduleDisplay, 1000);
+            setInterval(updateTimeDisplays, 1000);
+            setInterval(updateAll, 60000);
             setInterval(() => {
                 subwayData = generateSubwayData();
-                updateSubwayCard();
+                updateSubwayStatus();
             }, 3600000);
             
-            // Cycle announcements every 15 seconds
-            setInterval(cycleAnnouncements, 15000);
-            
-            // Cycle alerts every 30 seconds
-            setInterval(cycleAlerts, 30000);
-            
-            // Shuffle card colors every 30 seconds if dynamic cards enabled
-            setInterval(() => {
-                if (userSettings.dynamicCards) {
-                    shuffleCardColors();
-                }
-            }, 30000);
+            // MTA-style cycling intervals
+            setInterval(slideLeftPanel, 8000); // Left panel cycles every 8 seconds
+            setInterval(slideAnnouncement, 15000); // Announcements every 15 seconds
+            setInterval(slideAlert, 30000); // Alerts every 30 seconds
         }
 
-        // Start the application
+        // Start
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
+            document.addEventListener('DOMContentLoaded', initialize);
         } else {
-            initializeApp();
+            initialize();
         }
     </script>
 </body>
