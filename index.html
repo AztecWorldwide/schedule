@@ -391,35 +391,6 @@
             }
         }
         
-        .celebration-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(45deg, #ffeb3b, #ffc107);
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            color: #333;
-            font-size: 1.5em;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(255, 235, 59, 0.4);
-            transition: all 0.3s ease;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .celebration-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 235, 59, 0.6);
-        }
-        
-        .celebration-btn:active {
-            transform: scale(0.95);
-        }
-        
         .code-overlay {
             position: fixed;
             top: 0;
@@ -617,6 +588,11 @@
             box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
         }
         
+        .emergency-special .card:not(.schedule-card) {
+            background: linear-gradient(135deg, #e91e63, #9c27b0) !important;
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.8);
+        }
+        
         .emergency-lockdown .schedule-card {
             background: rgba(255, 235, 59, 0.95) !important;
             box-shadow: 0 0 50px rgba(255, 235, 59, 0.8);
@@ -640,6 +616,11 @@
         .emergency-fire .schedule-card {
             background: rgba(244, 67, 54, 0.95) !important;
             box-shadow: 0 0 50px rgba(244, 67, 54, 0.8);
+        }
+        
+        .emergency-special .schedule-card {
+            background: rgba(255, 235, 59, 0.95) !important;
+            box-shadow: 0 0 50px rgba(255, 235, 59, 0.8);
         }
         
         .emergency-text {
@@ -687,6 +668,27 @@
         @keyframes fireColorFlash {
             0%, 50% { color: white; }
             51%, 100% { color: #ffeb3b; }
+        }
+        
+        .special-text {
+            color: #2196f3;
+            animation: specialPulse 2s infinite;
+        }
+        
+        @keyframes specialPulse {
+            0%, 100% { 
+                transform: scale(1);
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            }
+            50% { 
+                transform: scale(1.05);
+                text-shadow: 3px 3px 15px rgba(33, 150, 243, 0.6);
+            }
+        }
+        
+        .emergency-option-settings.special {
+            background: rgba(255, 235, 59, 0.3);
+            border-color: #ffeb3b;
         }
         
         .holiday-badge {
@@ -1069,7 +1071,18 @@
                 <div class="emergency-option-settings lockdown" onclick="activateEmergency('lockdown')">🔒 Lockdown</div>
                 <div class="emergency-option-settings shelter" onclick="activateEmergency('shelter')">🏠 Shelter-In</div>
                 <div class="emergency-option-settings fire" onclick="activateEmergency('fire')">🔥 Fire</div>
+                <div class="emergency-option-settings special" onclick="activateEmergency('special')">⭐ Special Event</div>
                 <div class="emergency-option-settings emergency-exit-settings" onclick="deactivateEmergency()">✅ Exit Emergency</div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Special Event Text</h3>
+                <input type="text" class="city-input" id="specialEventInput" 
+                       placeholder="Enter special event text (e.g., ASSEMBLY, GRADUATION, FIELD DAY)" 
+                       aria-label="Special event text">
+                <div class="small-text" style="opacity: 0.7; margin-top: 5px;">
+                    Customize the text shown during special events. Background will be yellow, text will be blue.
+                </div>
             </div>
             
             <div class="settings-section">
@@ -1141,7 +1154,7 @@
     <script>
         'use strict';
         
-        const APP_VERSION = '2.6.0';
+        const APP_VERSION = '3.1.0';
         const STORAGE_KEY = 'schoolDashboardSettings';
         
         // Default settings and presets
@@ -1159,6 +1172,7 @@
                 "New lunch menu available",
                 "Parent-teacher conferences next month"
             ],
+            specialEventText: "SPECIAL EVENT",
             dynamicCards: true,
             schedule: [
                 { name: "Before school", start: "00:00", end: "08:00", type: "before" },
@@ -1408,6 +1422,9 @@
                     }
                     if (parsedSettings.alerts && Array.isArray(parsedSettings.alerts)) {
                         userSettings.alerts = parsedSettings.alerts;
+                    }
+                    if (parsedSettings.specialEventText) {
+                        userSettings.specialEventText = parsedSettings.specialEventText;
                     }
                     if (typeof parsedSettings.dynamicCards === 'boolean') {
                         userSettings.dynamicCards = parsedSettings.dynamicCards;
@@ -1954,12 +1971,18 @@
             document.getElementById('cityInput').value = userSettings.city;
             document.getElementById('announcementsInput').value = userSettings.announcements.join('\n');
             document.getElementById('alertsInput').value = userSettings.alerts.join('\n');
+            document.getElementById('specialEventInput').value = userSettings.specialEventText;
             document.getElementById('dynamicCardsToggle').checked = userSettings.dynamicCards;
             generateScheduleInputs();
         }
         
         function closeSettings() {
             document.getElementById('settingsOverlay').style.display = 'none';
+            // Close emergency options if open
+            const emergencyOptions = document.getElementById('emergencyOptionsSettings');
+            if (emergencyOptions) {
+                emergencyOptions.classList.remove('show');
+            }
             clearMessages();
         }
         
@@ -2042,6 +2065,7 @@
             const newAlerts = newAlertsText.split('\n')
                 .map(line => line.trim())
                 .filter(line => line.length > 0);
+            const newSpecialEventText = document.getElementById('specialEventInput').value || 'SPECIAL EVENT';
             const newDynamicCards = document.getElementById('dynamicCardsToggle').checked;
             const tempSchedule = [...userSettings.schedule];
             const inputs = document.querySelectorAll('#scheduleInputs input');
@@ -2068,6 +2092,7 @@
             userSettings.city = newCity;
             userSettings.announcements = newAnnouncements.length > 0 ? newAnnouncements : DEFAULT_SETTINGS.announcements;
             userSettings.alerts = newAlerts.length > 0 ? newAlerts : DEFAULT_SETTINGS.alerts;
+            userSettings.specialEventText = newSpecialEventText;
             userSettings.dynamicCards = newDynamicCards;
             userSettings.schedule = tempSchedule;
             
@@ -2177,6 +2202,9 @@
                             }
                             if (!userSettings.alerts || !Array.isArray(userSettings.alerts)) {
                                 userSettings.alerts = DEFAULT_SETTINGS.alerts;
+                            }
+                            if (!userSettings.specialEventText) {
+                                userSettings.specialEventText = DEFAULT_SETTINGS.specialEventText;
                             }
                             if (typeof userSettings.dynamicCards !== 'boolean') {
                                 userSettings.dynamicCards = DEFAULT_SETTINGS.dynamicCards;
@@ -2408,6 +2436,10 @@
                     emergencyText = 'FIRE FIRE FIRE';
                     textClass = 'fire-text';
                     break;
+                case 'special':
+                    emergencyText = userSettings.specialEventText || 'SPECIAL EVENT';
+                    textClass = 'special-text';
+                    break;
             }
             
             scheduleCard.innerHTML = `<div class="emergency-text ${textClass}">${emergencyText}</div>`;
@@ -2428,7 +2460,7 @@
             }
             
             // Remove emergency classes
-            document.body.classList.remove('emergency-active', 'emergency-lockdown', 'emergency-shelter', 'emergency-fire');
+            document.body.classList.remove('emergency-active', 'emergency-lockdown', 'emergency-shelter', 'emergency-fire', 'emergency-special');
             
             // Restore normal schedule display
             if (normalScheduleDisplay) {
